@@ -8,12 +8,14 @@ import pl.archala.dto.balance.GetBalanceDTO;
 import pl.archala.entity.Balance;
 import pl.archala.entity.User;
 import pl.archala.enums.BalanceCode;
+import pl.archala.exception.InsufficientFundsException;
 import pl.archala.exception.UserAlreadyContainsBalance;
 import pl.archala.mapper.BalanceMapper;
 import pl.archala.repository.BalancesRepository;
 import pl.archala.repository.UsersRepository;
 import pl.archala.service.BalancesService;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 import static pl.archala.utils.StringInfoProvider.*;
@@ -49,6 +51,20 @@ public class BalancesServiceImpl implements BalancesService {
         user.setBalance(savedBalance);
 
         return balanceMapper.toGetDto(savedBalance);
+    }
+
+    @Override
+    public synchronized GetBalanceDTO makeTransaction(Long fromBalanceId, Long toBalanceId, BigDecimal value) throws InsufficientFundsException {
+        Balance fromBalance = findBalanceById(fromBalanceId);
+        if (fromBalance.containsAtLeast(value)) {
+            throw new InsufficientFundsException(INSUFFICIENT_FUNDS.formatted(value.longValueExact()));
+        }
+        Balance toBalance = findBalanceById(toBalanceId);
+
+        fromBalance.substract(value);
+        toBalance.add(value);
+
+        return balanceMapper.toGetDto(fromBalance);
     }
 
     private Balance findBalanceById(Long id) {
