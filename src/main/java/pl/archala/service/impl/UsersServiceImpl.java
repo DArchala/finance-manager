@@ -9,6 +9,11 @@ import pl.archala.service.UsersService;
 public class UsersServiceImpl implements UsersService {
 
     @Override
+    public GetUserDTO findById(Long id) {
+        return null;
+    }
+
+    @Override
     public GetUserDTO registerUser(AddUserDTO addUserDTO) {
         return null;
     }

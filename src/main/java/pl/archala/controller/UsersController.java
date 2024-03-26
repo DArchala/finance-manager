@@ -4,9 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.archala.dto.AddUserDTO;
 import pl.archala.dto.GetUserDTO;
 import pl.archala.service.UsersService;
@@ -18,6 +16,11 @@ import pl.archala.service.UsersService;
 public class UsersController {
 
     private final UsersService service;
+
+    @GetMapping("/details/{id}")
+    public GetUserDTO findById(@PathVariable Long id) {
+        return service.findById(id);
+    }
 
     @PostMapping
     public ResponseEntity<GetUserDTO> save(@Valid AddUserDTO addUserDTO) {
