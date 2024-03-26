@@ -19,7 +19,7 @@ public class Balance {
     @OneToOne(mappedBy = "balance")
     private User user;
 
-    public void substract(BigDecimal value) {
+    public void subtract(BigDecimal value) {
         this.value = this.value.subtract(value);
     }
 

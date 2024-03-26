@@ -61,7 +61,7 @@ public class BalancesServiceImpl implements BalancesService {
         }
         Balance toBalance = findBalanceById(toBalanceId);
 
-        fromBalance.substract(value);
+        fromBalance.subtract(value);
         toBalance.add(value);
 
         return balanceMapper.toGetDto(fromBalance);
@@ -70,7 +70,7 @@ public class BalancesServiceImpl implements BalancesService {
     private Balance findBalanceById(Long id) {
         Optional<Balance> optionalBalance = balancesRepository.findById(id);
         if (optionalBalance.isEmpty()) {
-            throw new EntityNotFoundException(BALANCE_DOES_NOT_EXIST.formatted(id));
+            throw new EntityNotFoundException(BALANCE_WITH_ID_DOES_NOT_EXIST.formatted(id));
         }
         return optionalBalance.get();
     }
