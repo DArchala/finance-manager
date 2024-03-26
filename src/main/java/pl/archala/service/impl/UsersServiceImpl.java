@@ -13,6 +13,8 @@ import pl.archala.service.UsersService;
 
 import java.util.Optional;
 
+import static pl.archala.utils.StringInfoProvider.USER_WITH_ID_DOES_NOT_EXIST;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -35,7 +37,7 @@ public class UsersServiceImpl implements UsersService {
     private User findUserById(Long id) {
         Optional<User> optionalUser = usersRepository.findById(id);
         if (optionalUser.isEmpty()) {
-            throw new EntityNotFoundException("User with id %d does not exist".formatted(id));
+            throw new EntityNotFoundException(USER_WITH_ID_DOES_NOT_EXIST.formatted(id));
         }
         return optionalUser.get();
     }

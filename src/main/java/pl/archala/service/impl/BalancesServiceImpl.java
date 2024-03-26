@@ -3,6 +3,7 @@ package pl.archala.service.impl;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import pl.archala.enums.BalanceCode;
 import pl.archala.repository.BalancesRepository;
 import pl.archala.dto.balance.GetBalanceDTO;
@@ -15,8 +16,11 @@ import pl.archala.service.BalancesService;
 
 import java.util.Optional;
 
+import static pl.archala.utils.StringInfoProvider.*;
+
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BalancesServiceImpl implements BalancesService {
 
     private final BalancesRepository balancesRepository;
@@ -34,7 +38,7 @@ public class BalancesServiceImpl implements BalancesService {
         User user = findUserByUsername(username);
 
         if (user.getBalance() != null) {
-            throw new UserAlreadyContainsBalance("User %s already contains balance, it is not possible to create next one.".formatted(user.getUsername()));
+            throw new UserAlreadyContainsBalance(USER_ALREADY_CONTAINS_BALANCE.formatted(user.getUsername()));
         }
 
         Balance balance = new Balance();
@@ -50,7 +54,7 @@ public class BalancesServiceImpl implements BalancesService {
     private Balance findBalanceById(Long id) {
         Optional<Balance> optionalBalance = balancesRepository.findById(id);
         if (optionalBalance.isEmpty()) {
-            throw new EntityNotFoundException("Balance with id %d does not exist".formatted(id));
+            throw new EntityNotFoundException(BALANCE_DOES_NOT_EXIST.formatted(id));
         }
         return optionalBalance.get();
     }
@@ -58,7 +62,7 @@ public class BalancesServiceImpl implements BalancesService {
     private User findUserByUsername(String username) {
         Optional<User> optionalUser = usersRepository.findUserByUsername(username);
         if (optionalUser.isEmpty()) {
-            throw new EntityNotFoundException("User with name %s does not exist".formatted(username));
+            throw new EntityNotFoundException(USER_WITH_USERNAME_DOES_NOT_EXIST.formatted(username));
         }
         return optionalUser.get();
     }
