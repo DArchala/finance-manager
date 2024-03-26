@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import pl.archala.dto.AddUserDTO;
-import pl.archala.dto.GetUserDTO;
+import pl.archala.dto.user.AddUserDTO;
+import pl.archala.dto.user.GetUserDTO;
 import pl.archala.service.UsersService;
 
 @Validated

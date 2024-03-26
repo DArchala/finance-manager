@@ -1,7 +1,7 @@
 package pl.archala.service;
 
-import pl.archala.dto.AddUserDTO;
-import pl.archala.dto.GetUserDTO;
+import pl.archala.dto.user.AddUserDTO;
+import pl.archala.dto.user.GetUserDTO;
 
 public interface UsersService {
 

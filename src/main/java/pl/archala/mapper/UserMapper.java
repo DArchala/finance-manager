@@ -1,8 +1,8 @@
 package pl.archala.mapper;
 
 import org.springframework.stereotype.Component;
-import pl.archala.dto.AddUserDTO;
-import pl.archala.dto.GetUserDTO;
+import pl.archala.dto.user.AddUserDTO;
+import pl.archala.dto.user.GetUserDTO;
 import pl.archala.entity.User;
 
 @Component

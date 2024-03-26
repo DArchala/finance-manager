@@ -1,4 +1,4 @@
-package pl.archala.dto;
+package pl.archala.dto.user;
 
 import jakarta.validation.constraints.*;
 import pl.archala.enums.NotificationChannel;

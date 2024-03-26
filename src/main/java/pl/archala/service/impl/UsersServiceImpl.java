@@ -4,11 +4,11 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pl.archala.dto.AddUserDTO;
-import pl.archala.dto.GetUserDTO;
+import pl.archala.dto.user.AddUserDTO;
+import pl.archala.dto.user.GetUserDTO;
 import pl.archala.entity.User;
 import pl.archala.mapper.UserMapper;
-import pl.archala.repositories.UsersRepository;
+import pl.archala.repository.UsersRepository;
 import pl.archala.service.UsersService;
 
 import java.util.Optional;
@@ -35,7 +35,7 @@ public class UsersServiceImpl implements UsersService {
     private User findUserById(Long id) {
         Optional<User> optionalUser = usersRepository.findById(id);
         if (optionalUser.isEmpty()) {
-            throw new EntityNotFoundException("User with id %d does not exist");
+            throw new EntityNotFoundException("User with id %d does not exist".formatted(id));
         }
         return optionalUser.get();
     }
