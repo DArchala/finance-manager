@@ -3,6 +3,7 @@ package pl.archala.service.impl;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import pl.archala.enums.BalanceCode;
 import pl.archala.repository.BalancesRepository;
 import pl.archala.dto.balance.GetBalanceDTO;
 import pl.archala.entity.Balance;
@@ -29,7 +30,7 @@ public class BalancesServiceImpl implements BalancesService {
     }
 
     @Override
-    public GetBalanceDTO save(String username) throws UserAlreadyContainsBalance {
+    public GetBalanceDTO save(BalanceCode balanceCode, String username) throws UserAlreadyContainsBalance {
         User user = findUserByUsername(username);
 
         if (user.getBalance() != null) {
@@ -38,6 +39,7 @@ public class BalancesServiceImpl implements BalancesService {
 
         Balance balance = new Balance();
         balance.setUser(user);
+        balance.setValue(balanceCode.getValue());
 
         Balance savedBalance = balancesRepository.save(balance);
         user.setBalance(savedBalance);

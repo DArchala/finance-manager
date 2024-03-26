@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import pl.archala.dto.balance.GetBalanceDTO;
+import pl.archala.enums.BalanceCode;
 import pl.archala.exception.UserAlreadyContainsBalance;
 import pl.archala.service.BalancesService;
 
@@ -24,8 +25,8 @@ public class BalancesController {
     }
 
     @PostMapping
-    public ResponseEntity<GetBalanceDTO> create(Principal principal) throws UserAlreadyContainsBalance {
-        return ResponseEntity.status(201).body(balancesService.save(principal.getName()));
+    public ResponseEntity<GetBalanceDTO> create(@RequestParam BalanceCode balanceCode, Principal principal) throws UserAlreadyContainsBalance {
+        return ResponseEntity.status(201).body(balancesService.save(balanceCode, principal.getName()));
     }
 
 }
