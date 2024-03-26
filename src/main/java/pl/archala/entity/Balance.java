@@ -19,4 +19,16 @@ public class Balance {
     @OneToOne(mappedBy = "balance")
     private User user;
 
+    public void substract(BigDecimal value) {
+        this.value = this.value.subtract(value);
+    }
+
+    public void add(BigDecimal value) {
+        this.value = this.value.add(value);
+    }
+
+    public boolean containsAtLeast(BigDecimal value) {
+        return this.value.compareTo(value) > 0;
+    }
+
 }
