@@ -26,7 +26,7 @@ public class BalancesController {
 
     @PostMapping
     public ResponseEntity<GetBalanceDTO> create(@RequestParam BalanceCode balanceCode, Principal principal) throws UserAlreadyContainsBalance {
-        return ResponseEntity.status(201).body(balancesService.save(balanceCode, principal.getName()));
+        return ResponseEntity.status(201).body(balancesService.create(balanceCode, principal.getName()));
     }
 
 }

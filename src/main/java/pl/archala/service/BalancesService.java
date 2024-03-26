@@ -8,5 +8,5 @@ public interface BalancesService {
 
     GetBalanceDTO findById(Long id);
 
-    GetBalanceDTO save(BalanceCode balanceCode, String username) throws UserAlreadyContainsBalance;
+    GetBalanceDTO create(BalanceCode balanceCode, String username) throws UserAlreadyContainsBalance;
 }
