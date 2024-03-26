@@ -14,7 +14,7 @@ public class Balance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private BigDecimal value;
+    private BigDecimal value = BigDecimal.ZERO;
 
     @OneToOne(mappedBy = "balance")
     private User user;
