@@ -26,4 +26,8 @@ public class User {
 
     private NotificationChannel notificationChannel;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "balance_id")
+    private Balance balance;
+
 }
