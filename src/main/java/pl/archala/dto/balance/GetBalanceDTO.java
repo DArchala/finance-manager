@@ -1,4 +1,7 @@
 package pl.archala.dto.balance;
 
-public record GetBalanceDTO() {
+import java.math.BigDecimal;
+
+public record GetBalanceDTO(Long id, BigDecimal value) {
+
 }
