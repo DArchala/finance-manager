@@ -1,0 +1,26 @@
+services:
+
+  finance-manager:
+    image: finance-manager:latest
+    hostname: finance-manager
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    env_file:
+      - dev.env
+    profiles:
+      - dev
+
+  postgres:
+    image: postgres:16
+    hostname: postgres
+    ports:
+      - "15432:5432"
+    env_file:
+      - dev.env
+    profiles:
+      - dev
