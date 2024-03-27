@@ -5,7 +5,5 @@ import pl.archala.dto.user.GetUserDTO;
 
 public interface UsersService {
 
-    GetUserDTO findById(Long id);
-
     GetUserDTO registerUser(AddUserDTO addUserDTO);
 }

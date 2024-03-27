@@ -17,11 +17,6 @@ public class UsersController {
 
     private final UsersService service;
 
-    @GetMapping("/details/{id}")
-    public GetUserDTO findById(@PathVariable Long id) {
-        return service.findById(id);
-    }
-
     @PostMapping
     public ResponseEntity<GetUserDTO> save(@Valid AddUserDTO addUserDTO) {
         return ResponseEntity.status(201).body(service.registerUser(addUserDTO));
