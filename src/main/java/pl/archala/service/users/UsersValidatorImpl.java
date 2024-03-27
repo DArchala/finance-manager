@@ -1,11 +1,11 @@
-package pl.archala.service.impl;
+package pl.archala.service.users;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.archala.dto.user.AddUserDTO;
 import pl.archala.exception.UsersConflictException;
 import pl.archala.repository.UsersRepository;
-import pl.archala.service.UsersValidator;
+import pl.archala.service.users.UsersValidator;
 
 import static pl.archala.utils.StringInfoProvider.*;
 

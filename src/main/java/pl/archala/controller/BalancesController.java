@@ -15,7 +15,7 @@ import pl.archala.exception.InsufficientFundsException;
 import pl.archala.exception.TransactionsLimitException;
 import pl.archala.exception.UserAlreadyContainsBalance;
 import pl.archala.exception.UsersConflictException;
-import pl.archala.service.BalancesService;
+import pl.archala.service.balances.BalancesService;
 
 import java.math.BigDecimal;
 import java.security.Principal;

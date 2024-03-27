@@ -1,4 +1,4 @@
-package pl.archala.service;
+package pl.archala.service.users;
 
 import pl.archala.dto.user.AddUserDTO;
 import pl.archala.exception.UsersConflictException;

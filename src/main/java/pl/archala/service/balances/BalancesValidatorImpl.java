@@ -1,10 +1,10 @@
-package pl.archala.service.impl;
+package pl.archala.service.balances;
 
 import org.springframework.stereotype.Service;
 import pl.archala.entity.Balance;
 import pl.archala.exception.InsufficientFundsException;
 import pl.archala.exception.TransactionsLimitException;
-import pl.archala.service.BalancesValidator;
+import pl.archala.service.balances.BalancesValidator;
 
 import java.math.BigDecimal;
 

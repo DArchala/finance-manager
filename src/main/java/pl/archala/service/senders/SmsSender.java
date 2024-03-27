@@ -1,6 +1,4 @@
-package pl.archala.service.impl.senders;
-
-import pl.archala.service.NotificationSender;
+package pl.archala.service.senders;
 
 public class SmsSender implements NotificationSender {
 

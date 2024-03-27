@@ -1,4 +1,4 @@
-package pl.archala.service;
+package pl.archala.service.balances;
 
 import pl.archala.dto.balance.GetBalanceDTO;
 import pl.archala.enums.BalanceCode;

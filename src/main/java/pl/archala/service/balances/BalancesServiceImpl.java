@@ -1,4 +1,4 @@
-package pl.archala.service.impl;
+package pl.archala.service.balances;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +14,8 @@ import pl.archala.exception.UserAlreadyContainsBalance;
 import pl.archala.mapper.BalancesMapper;
 import pl.archala.repository.BalancesRepository;
 import pl.archala.repository.UsersRepository;
-import pl.archala.service.BalancesService;
-import pl.archala.service.BalancesValidator;
+import pl.archala.service.balances.BalancesService;
+import pl.archala.service.balances.BalancesValidator;
 
 import java.math.BigDecimal;
 import java.util.Optional;

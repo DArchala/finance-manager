@@ -1,4 +1,4 @@
-package pl.archala.service;
+package pl.archala.service.balances;
 
 import pl.archala.entity.Balance;
 import pl.archala.exception.InsufficientFundsException;

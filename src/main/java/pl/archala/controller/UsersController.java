@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import pl.archala.dto.user.AddUserDTO;
 import pl.archala.dto.user.GetUserDTO;
 import pl.archala.exception.UsersConflictException;
-import pl.archala.service.UsersService;
+import pl.archala.service.users.UsersService;
 
 @Validated
 @RestController
