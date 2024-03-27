@@ -23,11 +23,6 @@ public class BalancesController {
 
     private final BalancesService balancesService;
 
-    @GetMapping("/details/{id}")
-    public GetBalanceDTO findById(@PathVariable Long id) {
-        return balancesService.findById(id);
-    }
-
     @PostMapping
     public ResponseEntity<GetBalanceDTO> create(@RequestParam BalanceCode balanceCode, Principal principal) throws UserAlreadyContainsBalance {
         return ResponseEntity.status(201).body(balancesService.create(balanceCode, principal.getName()));

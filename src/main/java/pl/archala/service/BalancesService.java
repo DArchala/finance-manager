@@ -9,8 +9,6 @@ import java.math.BigDecimal;
 
 public interface BalancesService {
 
-    GetBalanceDTO findById(Long id);
-
     GetBalanceDTO create(BalanceCode balanceCode, String username) throws UserAlreadyContainsBalance;
 
     GetBalanceDTO makeTransaction(Long fromBalanceId, Long toBalanceId, BigDecimal value) throws InsufficientFundsException;

@@ -30,12 +30,6 @@ public class BalancesServiceImpl implements BalancesService {
     private final BalanceMapper balanceMapper;
 
     @Override
-    public GetBalanceDTO findById(Long id) {
-        Balance balance = findBalanceById(id);
-        return balanceMapper.toGetDto(balance);
-    }
-
-    @Override
     public GetBalanceDTO create(BalanceCode balanceCode, String username) throws UserAlreadyContainsBalance {
         User user = findUserByUsername(username);
 
