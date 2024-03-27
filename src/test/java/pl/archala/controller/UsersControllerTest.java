@@ -179,4 +179,76 @@ class UsersControllerTest extends PostgresqlContainer {
                 .value(err -> Objects.equals(err.reasons().size(), 1))
                 .value(err -> err.reasons().contains(invalidPhoneMsg));
     }
+
+    @Test
+    void shouldReturnErrorIfEmailIsInvalid() {
+        //given
+        String username = "username123";
+        String phone = "123456789";
+        String password = "passWORD1@";
+        NotificationChannel channel = NotificationChannel.SMS;
+
+        String blankEmailMsg = "User e-mail must not be blank";
+        String invalidEmailMsg = "User e-mail must be a well-formed email address";
+
+        AddUserDTO blankEmailUser = new AddUserDTO(username, password, phone, "", channel);
+        AddUserDTO invalidEmailUser1 = new AddUserDTO(username, password, phone, "invalidemail", channel);
+        AddUserDTO invalidEmailUser2 = new AddUserDTO(username, password, phone, "invalidemail@.", channel);
+        AddUserDTO invalidEmailUser3 = new AddUserDTO(username, password, phone, "invalidemail@com", channel);
+        AddUserDTO invalidEmailUser4 = new AddUserDTO(username, password, phone, "invalidemail.com", channel);
+        AddUserDTO invalidEmailUser5 = new AddUserDTO(username, password, phone, "@gmail.com", channel);
+
+        //when
+        webTestClient.post().uri("/api/users").bodyValue(blankEmailUser).exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorResponse.class)
+                .value(err -> err.status().equals(HttpStatus.BAD_REQUEST))
+                .value(err -> Objects.equals(err.reasons().size(), 1))
+                .value(err -> err.reasons().contains(blankEmailMsg))
+                .returnResult().getResponseBody();
+
+        webTestClient.post().uri("/api/users").bodyValue(invalidEmailUser1).exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorResponse.class)
+                .value(err -> err.status().equals(HttpStatus.BAD_REQUEST))
+                .value(err -> Objects.equals(err.reasons().size(), 1))
+                .value(err -> err.reasons().contains(invalidEmailMsg))
+                .returnResult().getResponseBody();
+
+        webTestClient.post().uri("/api/users").bodyValue(invalidEmailUser2).exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorResponse.class)
+                .value(err -> err.status().equals(HttpStatus.BAD_REQUEST))
+                .value(err -> Objects.equals(err.reasons().size(), 1))
+                .value(err -> err.reasons().contains(invalidEmailMsg))
+                .returnResult().getResponseBody();
+
+        webTestClient.post().uri("/api/users").bodyValue(invalidEmailUser3).exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorResponse.class)
+                .value(err -> err.status().equals(HttpStatus.BAD_REQUEST))
+                .value(err -> Objects.equals(err.reasons().size(), 1))
+                .value(err -> err.reasons().contains(invalidEmailMsg))
+                .returnResult().getResponseBody();
+
+        webTestClient.post().uri("/api/users").bodyValue(invalidEmailUser4).exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorResponse.class)
+                .value(err -> err.status().equals(HttpStatus.BAD_REQUEST))
+                .value(err -> Objects.equals(err.reasons().size(), 1))
+                .value(err -> err.reasons().contains(invalidEmailMsg))
+                .returnResult().getResponseBody();
+
+        webTestClient.post().uri("/api/users").bodyValue(invalidEmailUser5).exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorResponse.class)
+                .value(err -> err.status().equals(HttpStatus.BAD_REQUEST))
+                .value(err -> Objects.equals(err.reasons().size(), 1))
+                .value(err -> err.reasons().contains(invalidEmailMsg))
+                .returnResult().getResponseBody();
+
+        //then
+
+
+    }
 }

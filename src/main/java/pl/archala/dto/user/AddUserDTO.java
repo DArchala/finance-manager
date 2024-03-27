@@ -16,7 +16,9 @@ public record AddUserDTO(@NotBlank(message = "Username must not be blank")
                          @Pattern(regexp = "^\\d{9}$", message = "User phone number must contains exactly 9 digits")
                          String phone,
 
-                         @NotBlank(message = "User e-mail must not be blank") @Email String email,
+                         @NotBlank(message = "User e-mail must not be blank")
+                         @Pattern(regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$",
+                                 message = "User e-mail must be a well-formed email address") String email,
 
                          @NotNull(message = "User notification channel must not be null") NotificationChannel notificationChannel) {
 
