@@ -1,6 +1,8 @@
 package pl.archala.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +27,8 @@ public class Balance {
     @OneToOne(mappedBy = "balance", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private User user;
 
+    @Min(0)
+    @Max(3)
     private int dailyTransactionsCount = 0;
 
     public void subtract(BigDecimal value) {
