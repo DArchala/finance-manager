@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import pl.archala.dto.errorResponse.ErrorResponse;
+import pl.archala.exception.UsersConflictException;
 import pl.archala.mapper.ErrorResponseMapper;
 
 import java.util.List;
@@ -38,6 +39,13 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     protected ResponseEntity<ErrorResponse> handlePropertyReferenceException(EntityNotFoundException e) {
         List<String> reasons = List.of(e.getMessage());
         ErrorResponse errorResponse = mapper.toErrorResponse(reasons, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(errorResponse, errorResponse.status());
+    }
+
+    @ExceptionHandler(value = UsersConflictException.class)
+    protected ResponseEntity<ErrorResponse> handleUserException(UsersConflictException e) {
+        List<String> reasons = List.of(e.getMessage());
+        ErrorResponse errorResponse = mapper.toErrorResponse(reasons, HttpStatus.CONFLICT);
         return new ResponseEntity<>(errorResponse, errorResponse.status());
     }
 

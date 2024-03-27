@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static pl.archala.utils.StringInfoProvider.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -199,6 +200,7 @@ class UsersControllerTest extends PostgresqlContainer {
         AddUserDTO invalidEmailUser5 = new AddUserDTO(username, password, phone, "@gmail.com", channel);
 
         //when
+        //then
         webTestClient.post().uri("/api/users").bodyValue(blankEmailUser).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
@@ -246,9 +248,80 @@ class UsersControllerTest extends PostgresqlContainer {
                 .value(err -> Objects.equals(err.reasons().size(), 1))
                 .value(err -> err.reasons().contains(invalidEmailMsg))
                 .returnResult().getResponseBody();
+    }
 
+    @Test
+    void shouldNotAllowToAddTwoUsersWithEqualUsernames() {
+        //given
+        String username = "user123";
+        NotificationChannel channel = NotificationChannel.SMS;
+        AddUserDTO addUserDTO1 = new AddUserDTO(username, "passworD1@", "123456789", "email321@gmail.com", channel);
+        AddUserDTO addUserDTO2 = new AddUserDTO(username, "passworD1@", "987654321", "email123@wp.pl", channel);
+
+        String expectedUsernameTakenMsg = USERNAME_IS_ALREADY_TAKEN.formatted(username);
+
+        //when
         //then
+        webTestClient.post().uri("/api/users").bodyValue(addUserDTO1).exchange()
+                .expectStatus().isCreated()
+                .expectBody(GetUserDTO.class)
+                .returnResult().getResponseBody();
 
+        webTestClient.post().uri("/api/users").bodyValue(addUserDTO2).exchange()
+                .expectStatus().isEqualTo(HttpStatus.CONFLICT)
+                .expectBody(ErrorResponse.class)
+                .value(err -> Objects.equals(err.reasons().size(), 1))
+                .value(err -> err.reasons().contains(expectedUsernameTakenMsg));
 
+    }
+
+    @Test
+    void shouldNotAllowToAddTwoUsersWithEqualEmails() {
+        //given
+        String password = "passworD1@";
+        String email = "email@wp.pl";
+        NotificationChannel channel = NotificationChannel.SMS;
+        AddUserDTO addUserDTO1 = new AddUserDTO("user123", password, "123456789", email, channel);
+        AddUserDTO addUserDTO2 = new AddUserDTO("user321", password, "987654321", email, channel);
+
+        String expectedEmailTakenMsg = EMAIL_IS_ALREADY_TAKEN.formatted(email);
+
+        //when
+        //then
+        webTestClient.post().uri("/api/users").bodyValue(addUserDTO1).exchange()
+                .expectStatus().isCreated()
+                .expectBody(GetUserDTO.class)
+                .returnResult().getResponseBody();
+
+        webTestClient.post().uri("/api/users").bodyValue(addUserDTO2).exchange()
+                .expectStatus().isEqualTo(HttpStatus.CONFLICT)
+                .expectBody(ErrorResponse.class)
+                .value(err -> Objects.equals(err.reasons().size(), 1))
+                .value(err -> err.reasons().contains(expectedEmailTakenMsg));
+    }
+
+    @Test
+    void shouldNotAllowToAddTwoUsersWithEqualPhones() {
+        //given
+        String password = "passworD1@";
+        String phone = "123456789";
+        NotificationChannel channel = NotificationChannel.SMS;
+        AddUserDTO addUserDTO1 = new AddUserDTO("user123", password, phone, "email123@wp.pl", channel);
+        AddUserDTO addUserDTO2 = new AddUserDTO("user321", password, phone, "email321@gmail.com", channel);
+
+        String expectedPhoneTakenMsg = PHONE_IS_ALREADY_TAKEN.formatted(phone);
+
+        //when
+        //then
+        webTestClient.post().uri("/api/users").bodyValue(addUserDTO1).exchange()
+                .expectStatus().isCreated()
+                .expectBody(GetUserDTO.class)
+                .returnResult().getResponseBody();
+
+        webTestClient.post().uri("/api/users").bodyValue(addUserDTO2).exchange()
+                .expectStatus().isEqualTo(HttpStatus.CONFLICT)
+                .expectBody(ErrorResponse.class)
+                .value(err -> Objects.equals(err.reasons().size(), 1))
+                .value(err -> err.reasons().contains(expectedPhoneTakenMsg));
     }
 }
