@@ -9,11 +9,13 @@ import pl.archala.entity.Balance;
 import pl.archala.entity.User;
 import pl.archala.enums.BalanceCode;
 import pl.archala.exception.InsufficientFundsException;
+import pl.archala.exception.TransactionsLimitException;
 import pl.archala.exception.UserAlreadyContainsBalance;
-import pl.archala.mapper.BalanceMapper;
+import pl.archala.mapper.BalancesMapper;
 import pl.archala.repository.BalancesRepository;
 import pl.archala.repository.UsersRepository;
 import pl.archala.service.BalancesService;
+import pl.archala.service.BalancesValidator;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -26,8 +28,9 @@ import static pl.archala.utils.StringInfoProvider.*;
 public class BalancesServiceImpl implements BalancesService {
 
     private final BalancesRepository balancesRepository;
+    private final BalancesMapper balancesMapper;
+    private final BalancesValidator balancesValidator;
     private final UsersRepository usersRepository;
-    private final BalanceMapper balanceMapper;
 
     @Override
     public GetBalanceDTO create(BalanceCode balanceCode, String username) throws UserAlreadyContainsBalance {
@@ -44,21 +47,21 @@ public class BalancesServiceImpl implements BalancesService {
         Balance savedBalance = balancesRepository.save(balance);
         user.setBalance(savedBalance);
 
-        return balanceMapper.toGetDto(savedBalance);
+        return balancesMapper.toGetDto(savedBalance);
     }
 
     @Override
-    public synchronized GetBalanceDTO makeTransaction(Long fromBalanceId, Long toBalanceId, BigDecimal value) throws InsufficientFundsException {
-        Balance fromBalance = findBalanceById(fromBalanceId);
-        if (fromBalance.containsAtLeast(value)) {
-            throw new InsufficientFundsException(INSUFFICIENT_FUNDS.formatted(value.longValueExact()));
-        }
-        Balance toBalance = findBalanceById(toBalanceId);
+    public synchronized GetBalanceDTO makeTransaction(Long fromBalanceId, Long toBalanceId, BigDecimal value) throws InsufficientFundsException, TransactionsLimitException {
+        Balance sourceBalance = findBalanceById(fromBalanceId);
+        balancesValidator.validateBalanceToTransaction(sourceBalance, value);
+        Balance targetBalance = findBalanceById(toBalanceId);
 
-        fromBalance.subtract(value);
-        toBalance.add(value);
+        sourceBalance.subtract(value);
+        targetBalance.add(value);
 
-        return balanceMapper.toGetDto(fromBalance);
+        sourceBalance.incrementTransactions();
+
+        return balancesMapper.toGetDto(sourceBalance);
     }
 
     private Balance findBalanceById(Long id) {

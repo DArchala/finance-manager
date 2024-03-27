@@ -19,3 +19,4 @@ spring:
       enabled: true
   application:
     name: finance-manager
+transactions-reset-scheduler-cron: "0 0 * * *"

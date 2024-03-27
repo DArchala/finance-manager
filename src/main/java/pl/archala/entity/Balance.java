@@ -8,8 +8,6 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 
-import static pl.archala.utils.StringInfoProvider.SUBTRACTING_BIGGER_VALUE;
-
 @Getter
 @NoArgsConstructor
 @EqualsAndHashCode
@@ -21,16 +19,15 @@ public class Balance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private BigDecimal value = new BigDecimal("0");
+    private BigDecimal value = BigDecimal.ZERO;
 
     @Setter
     @OneToOne(mappedBy = "balance", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private User user;
 
+    private int dailyTransactionsCount = 0;
+
     public void subtract(BigDecimal value) {
-        if (!containsAtLeast(value)) {
-            throw new ArithmeticException(SUBTRACTING_BIGGER_VALUE);
-        }
         this.value = this.value.subtract(value);
     }
 
@@ -42,4 +39,7 @@ public class Balance {
         return this.value.compareTo(value) >= 0;
     }
 
+    public void incrementTransactions() {
+        dailyTransactionsCount++;
+    }
 }
