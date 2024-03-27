@@ -19,7 +19,7 @@ public class User {
     private char[] password;
 
     @Column(nullable = false, unique = true)
-    private String phoneNumber;
+    private String phone;
 
     @Column(nullable = false, unique = true)
     private String email;

@@ -13,7 +13,7 @@ public record AddUserDTO(@NotBlank(message = "Username must not be blank")
 
                          @NotBlank(message = "User phone number must not be blank")
                          @Pattern(regexp = "^\\d{9}$")
-                         String phoneNumber,
+                         String phone,
 
                          @NotBlank(message = "User e-mail must not be blank") @Email String email,
 
