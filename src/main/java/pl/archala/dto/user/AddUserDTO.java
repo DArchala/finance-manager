@@ -8,11 +8,12 @@ public record AddUserDTO(@NotBlank(message = "Username must not be blank")
                          String username,
 
                          @NotBlank(message = "User password must not be blank")
-                         @Size(min = 8, max = 20, message = "User password must contains min 8 and max 20 chars")
+                         @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=]).{8,30}$",
+                                 message = "Password should contains min 8 and max 30 chars including capital letter, digit and special char (@#$%^&+=)")
                          String password,
 
                          @NotBlank(message = "User phone number must not be blank")
-                         @Pattern(regexp = "^\\d{9}$")
+                         @Pattern(regexp = "^\\d{9}$", message = "User phone number must contains exactly 9 digits")
                          String phone,
 
                          @NotBlank(message = "User e-mail must not be blank") @Email String email,
