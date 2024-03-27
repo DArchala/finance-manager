@@ -18,7 +18,7 @@ public class UsersController {
     private final UsersService service;
 
     @PostMapping
-    public ResponseEntity<GetUserDTO> save(@Valid AddUserDTO addUserDTO) {
+    public ResponseEntity<GetUserDTO> save(@Valid @RequestBody AddUserDTO addUserDTO) {
         return ResponseEntity.status(201).body(service.registerUser(addUserDTO));
     }
 

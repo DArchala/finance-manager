@@ -29,7 +29,10 @@ public class BalancesController {
     }
 
     @PostMapping("/transaction")
-    public GetBalanceDTO makeTransaction(Long fromBalanceId, Long toBalanceId, @DecimalMin(value = "0.0", inclusive = false) @Digits(integer = 3, fraction = 2) BigDecimal value) throws InsufficientFundsException {
+    public GetBalanceDTO makeTransaction(@RequestParam Long fromBalanceId,
+                                         @RequestParam Long toBalanceId,
+                                         @RequestParam @DecimalMin(value = "0.0", inclusive = false)
+                                         @Digits(integer = 3, fraction = 2) BigDecimal value) throws InsufficientFundsException {
         return balancesService.makeTransaction(fromBalanceId, toBalanceId, value);
     }
 }
