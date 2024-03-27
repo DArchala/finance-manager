@@ -24,6 +24,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(nullable = false)
     private NotificationChannel notificationChannel;
 
     @OneToOne(cascade = CascadeType.ALL)

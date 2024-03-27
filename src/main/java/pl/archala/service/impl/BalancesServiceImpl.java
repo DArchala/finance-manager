@@ -45,7 +45,7 @@ public class BalancesServiceImpl implements BalancesService {
 
         Balance balance = new Balance();
         balance.setUser(user);
-        balance.setValue(balanceCode.getValue());
+        balance.add(balanceCode.getValue());
 
         Balance savedBalance = balancesRepository.save(balance);
         user.setBalance(savedBalance);

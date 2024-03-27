@@ -1,11 +1,18 @@
 package pl.archala.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 
-@Data
+import static pl.archala.utils.StringInfoProvider.SUBTRACTING_BIGGER_VALUE;
+
+@Getter
+@NoArgsConstructor
+@EqualsAndHashCode
 @Table(name = "balances")
 @Entity
 public class Balance {
@@ -14,12 +21,16 @@ public class Balance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private BigDecimal value;
+    private BigDecimal value = new BigDecimal("0");
 
-    @OneToOne(mappedBy = "balance")
+    @Setter
+    @OneToOne(mappedBy = "balance", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private User user;
 
     public void subtract(BigDecimal value) {
+        if (!containsAtLeast(value)) {
+            throw new ArithmeticException(SUBTRACTING_BIGGER_VALUE);
+        }
         this.value = this.value.subtract(value);
     }
 
@@ -28,7 +39,7 @@ public class Balance {
     }
 
     public boolean containsAtLeast(BigDecimal value) {
-        return this.value.compareTo(value) > 0;
+        return this.value.compareTo(value) >= 0;
     }
 
 }
