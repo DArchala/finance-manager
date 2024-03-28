@@ -16,26 +16,9 @@ public class UsersValidatorImpl implements UsersValidator {
 
     @Override
     public void validateUserConflicts(AddUserDTO addUserDTO) throws UsersConflictException {
-        validateUserNameConflicts(addUserDTO);
-        validateUserEmailConflicts(addUserDTO);
-        validateUserPhoneConflicts(addUserDTO);
+        usersRepository.findUserByUsername(addUserDTO.username()).orElseThrow(() -> new UsersConflictException(USERNAME_IS_ALREADY_TAKEN.formatted(addUserDTO.username())));
+        usersRepository.findUserByEmail(addUserDTO.email()).orElseThrow(() -> new UsersConflictException(EMAIL_IS_ALREADY_TAKEN.formatted(addUserDTO.email())));
+        usersRepository.findUserByPhone(addUserDTO.phone()).orElseThrow(() -> new UsersConflictException(PHONE_IS_ALREADY_TAKEN.formatted(addUserDTO.phone())));
     }
 
-    private void validateUserNameConflicts(AddUserDTO addUserDTO) throws UsersConflictException {
-        if (usersRepository.findUserByUsername(addUserDTO.username()).isPresent()) {
-            throw new UsersConflictException(USERNAME_IS_ALREADY_TAKEN.formatted(addUserDTO.username()));
-        }
-    }
-
-    private void validateUserEmailConflicts(AddUserDTO addUserDTO) throws UsersConflictException {
-        if (usersRepository.findUserByEmail(addUserDTO.email()).isPresent()) {
-            throw new UsersConflictException(EMAIL_IS_ALREADY_TAKEN.formatted(addUserDTO.email()));
-        }
-    }
-
-    private void validateUserPhoneConflicts(AddUserDTO addUserDTO) throws UsersConflictException {
-        if (usersRepository.findUserByPhone(addUserDTO.phone()).isPresent()) {
-            throw new UsersConflictException(PHONE_IS_ALREADY_TAKEN.formatted(addUserDTO.phone()));
-        }
-    }
 }

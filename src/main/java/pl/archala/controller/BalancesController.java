@@ -31,13 +31,13 @@ public class BalancesController {
     }
 
     @PostMapping("/transaction")
-    public GetBalanceDTO makeTransaction(@RequestParam Long fromBalanceId,
-                                         @RequestParam Long toBalanceId,
+    public GetBalanceDTO makeTransaction(@RequestParam Long sourceBalanceId,
+                                         @RequestParam Long targetBalanceId,
                                          @RequestParam @DecimalMin(value = "0.0", inclusive = false,
                                                  message = "Value to transact must be bigger than 0")
                                          @Digits(integer = Integer.MAX_VALUE, fraction = 2, message = "Value should has a maximum of 2 decimal digits") BigDecimal value,
                                          @RequestParam String username)
             throws InsufficientFundsException, TransactionsLimitException, UsersConflictException, UserException {
-        return balancesService.makeTransaction(fromBalanceId, toBalanceId, value, username);
+        return balancesService.makeTransaction(sourceBalanceId, targetBalanceId, value, username);
     }
 }

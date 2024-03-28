@@ -17,7 +17,6 @@ import pl.archala.repository.BalancesRepository;
 import pl.archala.repository.UsersRepository;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 import static pl.archala.utils.ExceptionInfoProvider.*;
 
@@ -33,7 +32,7 @@ public class BalancesServiceImpl implements BalancesService {
 
     @Override
     public GetBalanceDTO create(BalanceCode balanceCode, String username) throws UserAlreadyContainsBalance {
-        User user = findUserByUsername(username);
+        User user = usersRepository.findUserByUsername(username).orElseThrow(() -> new EntityNotFoundException(USER_WITH_USERNAME_DOES_NOT_EXIST.formatted(username)));
 
         if (user.getBalance() != null) {
             throw new UserAlreadyContainsBalance(USER_ALREADY_CONTAINS_BALANCE.formatted(user.getUsername()));
@@ -49,15 +48,15 @@ public class BalancesServiceImpl implements BalancesService {
     }
 
     @Override
-    public synchronized GetBalanceDTO makeTransaction(Long fromBalanceId, Long toBalanceId, BigDecimal value, String username) throws InsufficientFundsException, TransactionsLimitException, UserException {
-        User user = findUserByUsernameWithBalance(username);
-        if (!user.getBalance().getId().equals(fromBalanceId)) {
-            throw new UserException(INVALID_SOURCE_BALANCE.formatted(fromBalanceId));
+    public synchronized GetBalanceDTO makeTransaction(Long sourceBalanceId, Long targetBalanceId, BigDecimal value, String username) throws InsufficientFundsException, TransactionsLimitException, UserException {
+        User user = usersRepository.findUserByUsernameFetchJoinBalance(username).orElseThrow(() -> new EntityNotFoundException(USER_WITH_USERNAME_DOES_NOT_EXIST.formatted(username)));
+        if (!user.getBalance().getId().equals(sourceBalanceId)) {
+            throw new UserException(INVALID_SOURCE_BALANCE.formatted(sourceBalanceId));
         }
-        Balance sourceBalance = findBalanceById(fromBalanceId);
+        Balance sourceBalance = balancesRepository.findById(sourceBalanceId).orElseThrow(() -> new EntityNotFoundException(BALANCE_WITH_ID_DOES_NOT_EXIST.formatted(sourceBalanceId)));
 
         balancesValidator.validateBalanceToTransaction(sourceBalance, value);
-        Balance targetBalance = findBalanceById(toBalanceId);
+        Balance targetBalance = balancesRepository.findById(targetBalanceId).orElseThrow(() -> new EntityNotFoundException(BALANCE_WITH_ID_DOES_NOT_EXIST.formatted(targetBalanceId)));
 
         sourceBalance.subtract(value);
         targetBalance.add(value);
@@ -65,29 +64,6 @@ public class BalancesServiceImpl implements BalancesService {
         sourceBalance.incrementTransactions();
 
         return balancesMapper.toGetDto(sourceBalance);
-    }
-
-    private Balance findBalanceById(Long id) {
-        Optional<Balance> optionalBalance = balancesRepository.findById(id);
-        if (optionalBalance.isEmpty()) {
-            throw new EntityNotFoundException(BALANCE_WITH_ID_DOES_NOT_EXIST.formatted(id));
-        }
-        return optionalBalance.get();
-    }
-
-    private User findUserByUsername(String username) {
-        return getOrThrowUserNotFound(usersRepository.findUserByUsername(username), username);
-    }
-
-    private User findUserByUsernameWithBalance(String username) {
-        return getOrThrowUserNotFound(usersRepository.findUserByUsernameFetchJoinBalance(username), username);
-    }
-
-    private User getOrThrowUserNotFound(Optional<User> optionalUser, String username) {
-        if (optionalUser.isEmpty()) {
-            throw new EntityNotFoundException(USER_WITH_USERNAME_DOES_NOT_EXIST.formatted(username));
-        }
-        return optionalUser.get();
     }
 
 }
