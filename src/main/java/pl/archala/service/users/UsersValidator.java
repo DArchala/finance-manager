@@ -5,6 +5,6 @@ import pl.archala.exception.UsersConflictException;
 
 public interface UsersValidator {
 
-    void validateUserConflicts(AddUserDTO addUserDTO) throws UsersConflictException;
+    void validateUsersConflicts(AddUserDTO addUserDTO) throws UsersConflictException;
 
 }

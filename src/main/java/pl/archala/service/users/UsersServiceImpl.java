@@ -9,8 +9,6 @@ import pl.archala.entity.User;
 import pl.archala.exception.UsersConflictException;
 import pl.archala.mapper.UserMapper;
 import pl.archala.repository.UsersRepository;
-import pl.archala.service.users.UsersService;
-import pl.archala.service.users.UsersValidator;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +21,7 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     public GetUserDTO registerUser(AddUserDTO addUserDTO) throws UsersConflictException {
-        usersValidator.validateUserConflicts(addUserDTO);
+        usersValidator.validateUsersConflicts(addUserDTO);
         User savedUser = usersRepository.save(userMapper.toEntity(addUserDTO));
         return userMapper.toGetDto(savedUser);
     }

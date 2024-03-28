@@ -7,6 +7,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
+import pl.archala.generator.BalanceIdentifierGenerator;
 import pl.archala.utils.BigDecimalProvider;
 
 import java.math.BigDecimal;
@@ -19,8 +21,9 @@ import java.math.BigDecimal;
 public class Balance {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "balance-id")
+    @GenericGenerator(name = "balance-id", type = BalanceIdentifierGenerator.class)
+    private String id;
 
     private volatile BigDecimal value = BigDecimalProvider.DEFAULT_VALUE;
 

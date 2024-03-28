@@ -13,3 +13,4 @@ spring:
     virtual:
       enabled: ${VIRTUAL_THREADS_ENABLED}
 transactions-reset-scheduler-cron: ${TRANSACTIONS_RESET_SCHEDULER_CRON}
+balance-id-length: ${BALANCE_ID_LENGTH}

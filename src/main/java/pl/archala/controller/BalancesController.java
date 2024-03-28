@@ -31,8 +31,8 @@ public class BalancesController {
     }
 
     @PostMapping("/transaction")
-    public GetBalanceDTO makeTransaction(@RequestParam Long sourceBalanceId,
-                                         @RequestParam Long targetBalanceId,
+    public GetBalanceDTO makeTransaction(@RequestParam String sourceBalanceId,
+                                         @RequestParam String targetBalanceId,
                                          @RequestParam @DecimalMin(value = "0.0", inclusive = false,
                                                  message = "Value to transact must be bigger than 0")
                                          @Digits(integer = Integer.MAX_VALUE, fraction = 2, message = "Value should has a maximum of 2 decimal digits") BigDecimal value,

@@ -10,5 +10,5 @@ public interface BalancesService {
 
     GetBalanceDTO create(BalanceCode balanceCode, String username) throws UserAlreadyContainsBalance;
 
-    GetBalanceDTO makeTransaction(Long sourceBalanceId, Long targetBalanceId, BigDecimal value, String username) throws InsufficientFundsException, TransactionsLimitException, UsersConflictException, UserException;
+    GetBalanceDTO makeTransaction(String sourceBalanceId, String targetBalanceId, BigDecimal value, String username) throws InsufficientFundsException, TransactionsLimitException, UsersConflictException, UserException;
 }

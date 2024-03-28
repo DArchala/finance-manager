@@ -3,8 +3,12 @@ package pl.archala.service.users;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import pl.archala.dto.user.AddUserDTO;
+import pl.archala.entity.User;
 import pl.archala.exception.UsersConflictException;
 import pl.archala.repository.UsersRepository;
+
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import static pl.archala.utils.ExceptionInfoProvider.*;
 
@@ -15,10 +19,15 @@ public class UsersValidatorImpl implements UsersValidator {
     private final UsersRepository usersRepository;
 
     @Override
-    public void validateUserConflicts(AddUserDTO addUserDTO) throws UsersConflictException {
-        usersRepository.findUserByUsername(addUserDTO.username()).orElseThrow(() -> new UsersConflictException(USERNAME_IS_ALREADY_TAKEN.formatted(addUserDTO.username())));
-        usersRepository.findUserByEmail(addUserDTO.email()).orElseThrow(() -> new UsersConflictException(EMAIL_IS_ALREADY_TAKEN.formatted(addUserDTO.email())));
-        usersRepository.findUserByPhone(addUserDTO.phone()).orElseThrow(() -> new UsersConflictException(PHONE_IS_ALREADY_TAKEN.formatted(addUserDTO.phone())));
+    public void validateUsersConflicts(AddUserDTO addUserDTO) throws UsersConflictException {
+        findByOrThrowException(() -> usersRepository.findUserByUsername(addUserDTO.username()), USERNAME_IS_ALREADY_TAKEN.formatted(addUserDTO.username()));
+        findByOrThrowException(() -> usersRepository.findUserByEmail(addUserDTO.username()), EMAIL_IS_ALREADY_TAKEN.formatted(addUserDTO.email()));
+        findByOrThrowException(() -> usersRepository.findUserByPhone(addUserDTO.username()), PHONE_IS_ALREADY_TAKEN.formatted(addUserDTO.phone()));
     }
 
+    private void findByOrThrowException(Supplier<Optional<User>> findUserBy, String exceptionMsg) throws UsersConflictException {
+        if (findUserBy.get().isPresent()) {
+            throw new UsersConflictException(exceptionMsg);
+        }
+    }
 }

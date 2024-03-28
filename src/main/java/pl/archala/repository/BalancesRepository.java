@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import pl.archala.entity.Balance;
 
 @Repository
-public interface BalancesRepository extends JpaRepository<Balance, Long> {
+public interface BalancesRepository extends JpaRepository<Balance, String> {
 
     @Modifying
     @Query("update Balance b set b.dailyTransactionsCount = 0")

@@ -48,7 +48,7 @@ public class BalancesServiceImpl implements BalancesService {
     }
 
     @Override
-    public synchronized GetBalanceDTO makeTransaction(Long sourceBalanceId, Long targetBalanceId, BigDecimal value, String username) throws InsufficientFundsException, TransactionsLimitException, UserException {
+    public synchronized GetBalanceDTO makeTransaction(String sourceBalanceId, String targetBalanceId, BigDecimal value, String username) throws InsufficientFundsException, TransactionsLimitException, UserException {
         User user = usersRepository.findUserByUsernameFetchJoinBalance(username).orElseThrow(() -> new EntityNotFoundException(USER_WITH_USERNAME_DOES_NOT_EXIST.formatted(username)));
         if (!user.getBalance().getId().equals(sourceBalanceId)) {
             throw new UserException(INVALID_SOURCE_BALANCE.formatted(sourceBalanceId));
