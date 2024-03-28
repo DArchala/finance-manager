@@ -11,10 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pl.archala.dto.balance.GetBalanceDTO;
 import pl.archala.enums.BalanceCode;
-import pl.archala.exception.InsufficientFundsException;
-import pl.archala.exception.TransactionsLimitException;
-import pl.archala.exception.UserAlreadyContainsBalance;
-import pl.archala.exception.UsersConflictException;
+import pl.archala.exception.*;
 import pl.archala.service.balances.BalancesService;
 
 import java.math.BigDecimal;
@@ -37,7 +34,7 @@ public class BalancesController {
     public GetBalanceDTO makeTransaction(@RequestParam Long fromBalanceId,
                                          @RequestParam Long toBalanceId,
                                          @RequestParam @DecimalMin(value = "0.0", inclusive = false)
-                                         @Digits(integer = 3, fraction = 2) BigDecimal value, Principal principal) throws InsufficientFundsException, TransactionsLimitException, UsersConflictException {
-        return balancesService.makeTransaction(fromBalanceId, toBalanceId, value);
+                                         @Digits(integer = 3, fraction = 2) BigDecimal value, Principal principal) throws InsufficientFundsException, TransactionsLimitException, UsersConflictException, UserException {
+        return balancesService.makeTransaction(fromBalanceId, toBalanceId, value, principal.getName());
     }
 }

@@ -11,11 +11,10 @@ import pl.archala.enums.BalanceCode;
 import pl.archala.exception.InsufficientFundsException;
 import pl.archala.exception.TransactionsLimitException;
 import pl.archala.exception.UserAlreadyContainsBalance;
+import pl.archala.exception.UserException;
 import pl.archala.mapper.BalancesMapper;
 import pl.archala.repository.BalancesRepository;
 import pl.archala.repository.UsersRepository;
-import pl.archala.service.balances.BalancesService;
-import pl.archala.service.balances.BalancesValidator;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -41,7 +40,6 @@ public class BalancesServiceImpl implements BalancesService {
         }
 
         Balance balance = new Balance();
-        balance.setUser(user);
         balance.add(balanceCode.getValue());
 
         Balance savedBalance = balancesRepository.save(balance);
@@ -51,8 +49,13 @@ public class BalancesServiceImpl implements BalancesService {
     }
 
     @Override
-    public synchronized GetBalanceDTO makeTransaction(Long fromBalanceId, Long toBalanceId, BigDecimal value) throws InsufficientFundsException, TransactionsLimitException {
+    public synchronized GetBalanceDTO makeTransaction(Long fromBalanceId, Long toBalanceId, BigDecimal value, String username) throws InsufficientFundsException, TransactionsLimitException, UserException {
+        User user = findUserByUsernameWithBalance(username);
+        if (user.getBalance().getId().equals(fromBalanceId)) {
+            throw new UserException(INVALID_SOURCE_BALANCE.formatted(fromBalanceId));
+        }
         Balance sourceBalance = findBalanceById(fromBalanceId);
+
         balancesValidator.validateBalanceToTransaction(sourceBalance, value);
         Balance targetBalance = findBalanceById(toBalanceId);
 
@@ -73,7 +76,14 @@ public class BalancesServiceImpl implements BalancesService {
     }
 
     private User findUserByUsername(String username) {
-        Optional<User> optionalUser = usersRepository.findUserByUsername(username);
+        return getOrThrowUserNotFound(usersRepository.findUserByUsername(username), username);
+    }
+
+    private User findUserByUsernameWithBalance(String username) {
+        return getOrThrowUserNotFound(usersRepository.findUserByUsernameWithBalance(username), username);
+    }
+
+    private User getOrThrowUserNotFound(Optional<User> optionalUser, String username) {
         if (optionalUser.isEmpty()) {
             throw new EntityNotFoundException(USER_WITH_USERNAME_DOES_NOT_EXIST.formatted(username));
         }

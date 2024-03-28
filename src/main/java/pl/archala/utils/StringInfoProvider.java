@@ -10,5 +10,6 @@ public final class StringInfoProvider {
     public static final String EMAIL_IS_ALREADY_TAKEN = "Provided email %s is already taken";
     public static final String PHONE_IS_ALREADY_TAKEN = "Provided phone %s is already taken";
     public static final String TRANSACTIONS_LIMIT_EXCEEDED = "Balance with id %d exceeded the daily transaction limit";
+    public static final String INVALID_SOURCE_BALANCE = "Provided source balance with id %d does not match your balance.";
 
 }
