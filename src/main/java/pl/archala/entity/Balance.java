@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import pl.archala.utils.BigDecimalProvider;
 
 import java.math.BigDecimal;
 
@@ -21,7 +22,7 @@ public class Balance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private BigDecimal value = BigDecimal.ZERO;
+    private volatile BigDecimal value = BigDecimalProvider.DEFAULT_VALUE;
 
     @Setter
     @OneToOne(mappedBy = "balance", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
