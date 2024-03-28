@@ -14,3 +14,4 @@ spring:
   threads:
     virtual:
       enabled: true
+transactions-reset-scheduler-cron: "* 0 * * * *"
