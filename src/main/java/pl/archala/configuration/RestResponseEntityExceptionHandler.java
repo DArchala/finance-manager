@@ -16,7 +16,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import pl.archala.dto.errorResponse.ErrorResponse;
+import pl.archala.exception.InsufficientFundsException;
 import pl.archala.exception.TransactionsLimitException;
+import pl.archala.exception.UserException;
 import pl.archala.exception.UsersConflictException;
 import pl.archala.mapper.ErrorResponseMapper;
 
@@ -52,6 +54,20 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler(value = TransactionsLimitException.class)
     protected ResponseEntity<ErrorResponse> handleTransactionsLimitException(TransactionsLimitException e) {
+        List<String> reasons = List.of(e.getMessage());
+        ErrorResponse errorResponse = mapper.toErrorResponse(reasons, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorResponse, errorResponse.status());
+    }
+
+    @ExceptionHandler(value = UserException.class)
+    protected ResponseEntity<ErrorResponse> handleUserException(UserException e) {
+        List<String> reasons = List.of(e.getMessage());
+        ErrorResponse errorResponse = mapper.toErrorResponse(reasons, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorResponse, errorResponse.status());
+    }
+
+    @ExceptionHandler(value = InsufficientFundsException.class)
+    protected ResponseEntity<ErrorResponse> handleInsufficientFundsException(InsufficientFundsException e) {
         List<String> reasons = List.of(e.getMessage());
         ErrorResponse errorResponse = mapper.toErrorResponse(reasons, HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(errorResponse, errorResponse.status());
