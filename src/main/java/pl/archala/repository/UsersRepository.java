@@ -14,6 +14,6 @@ public interface UsersRepository extends JpaRepository<User, Long> {
     Optional<User> findUserByEmail(String email);
     Optional<User> findUserByPhone(String phone);
 
-    @Query("select u from User u join fetch u.balance")
-    Optional<User> findUserByUsernameWithBalance(String username);
+    @Query("select distinct u from User u join fetch u.balance where u.username=:username")
+    Optional<User> findUserByUsernameFetchJoinBalance(String username);
 }

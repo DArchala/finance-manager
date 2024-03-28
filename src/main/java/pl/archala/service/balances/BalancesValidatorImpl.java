@@ -4,12 +4,11 @@ import org.springframework.stereotype.Service;
 import pl.archala.entity.Balance;
 import pl.archala.exception.InsufficientFundsException;
 import pl.archala.exception.TransactionsLimitException;
-import pl.archala.service.balances.BalancesValidator;
 
 import java.math.BigDecimal;
 
-import static pl.archala.utils.StringInfoProvider.INSUFFICIENT_FUNDS;
-import static pl.archala.utils.StringInfoProvider.TRANSACTIONS_LIMIT_EXCEEDED;
+import static pl.archala.utils.ExceptionInfoProvider.INSUFFICIENT_FUNDS;
+import static pl.archala.utils.ExceptionInfoProvider.TRANSACTIONS_LIMIT_EXCEEDED;
 
 @Service
 public class BalancesValidatorImpl implements BalancesValidator {

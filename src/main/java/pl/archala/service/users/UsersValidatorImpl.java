@@ -5,9 +5,8 @@ import org.springframework.stereotype.Service;
 import pl.archala.dto.user.AddUserDTO;
 import pl.archala.exception.UsersConflictException;
 import pl.archala.repository.UsersRepository;
-import pl.archala.service.users.UsersValidator;
 
-import static pl.archala.utils.StringInfoProvider.*;
+import static pl.archala.utils.ExceptionInfoProvider.*;
 
 @Service
 @RequiredArgsConstructor

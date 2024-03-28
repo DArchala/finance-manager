@@ -19,7 +19,7 @@ import pl.archala.repository.UsersRepository;
 import java.math.BigDecimal;
 import java.util.Optional;
 
-import static pl.archala.utils.StringInfoProvider.*;
+import static pl.archala.utils.ExceptionInfoProvider.*;
 
 @Service
 @RequiredArgsConstructor
@@ -51,7 +51,7 @@ public class BalancesServiceImpl implements BalancesService {
     @Override
     public synchronized GetBalanceDTO makeTransaction(Long fromBalanceId, Long toBalanceId, BigDecimal value, String username) throws InsufficientFundsException, TransactionsLimitException, UserException {
         User user = findUserByUsernameWithBalance(username);
-        if (user.getBalance().getId().equals(fromBalanceId)) {
+        if (!user.getBalance().getId().equals(fromBalanceId)) {
             throw new UserException(INVALID_SOURCE_BALANCE.formatted(fromBalanceId));
         }
         Balance sourceBalance = findBalanceById(fromBalanceId);
@@ -80,7 +80,7 @@ public class BalancesServiceImpl implements BalancesService {
     }
 
     private User findUserByUsernameWithBalance(String username) {
-        return getOrThrowUserNotFound(usersRepository.findUserByUsernameWithBalance(username), username);
+        return getOrThrowUserNotFound(usersRepository.findUserByUsernameFetchJoinBalance(username), username);
     }
 
     private User getOrThrowUserNotFound(Optional<User> optionalUser, String username) {

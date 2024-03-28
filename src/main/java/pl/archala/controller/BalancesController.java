@@ -15,7 +15,6 @@ import pl.archala.exception.*;
 import pl.archala.service.balances.BalancesService;
 
 import java.math.BigDecimal;
-import java.security.Principal;
 
 @Validated
 @RestController
@@ -26,15 +25,19 @@ public class BalancesController {
     private final BalancesService balancesService;
 
     @PostMapping
-    public ResponseEntity<GetBalanceDTO> create(@RequestParam BalanceCode balanceCode, Principal principal) throws UserAlreadyContainsBalance {
-        return ResponseEntity.status(201).body(balancesService.create(balanceCode, principal.getName()));
+    public ResponseEntity<GetBalanceDTO> create(@RequestParam BalanceCode balanceCode, String username)
+            throws UserAlreadyContainsBalance {
+        return ResponseEntity.status(201).body(balancesService.create(balanceCode, username));
     }
 
     @PostMapping("/transaction")
     public GetBalanceDTO makeTransaction(@RequestParam Long fromBalanceId,
                                          @RequestParam Long toBalanceId,
-                                         @RequestParam @DecimalMin(value = "0.0", inclusive = false)
-                                         @Digits(integer = 3, fraction = 2) BigDecimal value, Principal principal) throws InsufficientFundsException, TransactionsLimitException, UsersConflictException, UserException {
-        return balancesService.makeTransaction(fromBalanceId, toBalanceId, value, principal.getName());
+                                         @RequestParam @DecimalMin(value = "0.0", inclusive = false,
+                                                 message = "Value to transact must be bigger than 0")
+                                         @Digits(integer = Integer.MAX_VALUE, fraction = 2, message = "Value should has a maximum of 2 decimal digits") BigDecimal value,
+                                         @RequestParam String username)
+            throws InsufficientFundsException, TransactionsLimitException, UsersConflictException, UserException {
+        return balancesService.makeTransaction(fromBalanceId, toBalanceId, value, username);
     }
 }
