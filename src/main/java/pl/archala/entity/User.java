@@ -16,6 +16,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username;
 
+    @Column(nullable = false)
     private char[] password;
 
     @Column(nullable = false, unique = true)
@@ -25,6 +26,7 @@ public class User {
     private String email;
 
     @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
     private NotificationChannel notificationChannel;
 
     @OneToOne(cascade = CascadeType.ALL)

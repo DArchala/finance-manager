@@ -29,13 +29,13 @@ public class Balance {
 
     @Min(0)
     @Max(3)
-    private int dailyTransactionsCount = 0;
+    private volatile int dailyTransactionsCount = 0;
 
-    public void subtract(BigDecimal value) {
+    public synchronized void subtract(BigDecimal value) {
         this.value = this.value.subtract(value);
     }
 
-    public void add(BigDecimal value) {
+    public synchronized void add(BigDecimal value) {
         this.value = this.value.add(value);
     }
 
@@ -43,7 +43,7 @@ public class Balance {
         return this.value.compareTo(value) >= 0;
     }
 
-    public void incrementTransactions() {
+    public synchronized void incrementTransactions() {
         dailyTransactionsCount++;
     }
 }
