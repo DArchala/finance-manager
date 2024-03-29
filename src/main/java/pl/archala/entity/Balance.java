@@ -43,7 +43,7 @@ public class Balance {
         this.value = this.value.add(value);
     }
 
-    public boolean containsAtLeast(BigDecimal value) {
+    public synchronized boolean containsAtLeast(BigDecimal value) {
         return this.value.compareTo(value) >= 0;
     }
 
