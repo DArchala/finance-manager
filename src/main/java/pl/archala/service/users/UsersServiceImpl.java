@@ -2,6 +2,7 @@ package pl.archala.service.users;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pl.archala.dto.user.AddUserDTO;
@@ -22,11 +23,14 @@ public class UsersServiceImpl implements UsersService {
     private final UsersRepository usersRepository;
     private final UsersValidator usersValidator;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public GetUserDTO registerUser(AddUserDTO addUserDTO) throws UsersConflictException {
         usersValidator.validateUsersConflicts(addUserDTO);
-        User savedUser = usersRepository.save(userMapper.toEntity(addUserDTO));
+        User userToSave = userMapper.toEntity(addUserDTO);
+        userToSave.setPassword(passwordEncoder.encode(addUserDTO.password()).toCharArray());
+        User savedUser = usersRepository.save(userToSave);
         return userMapper.toGetDto(savedUser);
     }
 
