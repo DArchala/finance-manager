@@ -3,6 +3,7 @@ package pl.archala.mapper;
 import org.springframework.stereotype.Component;
 import pl.archala.dto.user.AddUserDTO;
 import pl.archala.dto.user.GetUserDTO;
+import pl.archala.dto.user.UserNotificationData;
 import pl.archala.entity.User;
 
 @Component
@@ -20,5 +21,9 @@ public class UserMapper {
         user.setEmail(addUserDTO.email());
         user.setNotificationChannel(addUserDTO.notificationChannel());
         return user;
+    }
+
+    public UserNotificationData toUserNotificationDTO(User user) {
+        return new UserNotificationData(user.getNotificationChannel(), user.getPhone(), user.getEmail());
     }
 }
