@@ -21,8 +21,8 @@ public class UsersValidatorImpl implements UsersValidator {
     @Override
     public void validateUsersConflicts(AddUserDTO addUserDTO) throws UsersConflictException {
         findByOrThrowException(() -> usersRepository.findUserByUsername(addUserDTO.username()), USERNAME_IS_ALREADY_TAKEN.formatted(addUserDTO.username()));
-        findByOrThrowException(() -> usersRepository.findUserByEmail(addUserDTO.username()), EMAIL_IS_ALREADY_TAKEN.formatted(addUserDTO.email()));
-        findByOrThrowException(() -> usersRepository.findUserByPhone(addUserDTO.username()), PHONE_IS_ALREADY_TAKEN.formatted(addUserDTO.phone()));
+        findByOrThrowException(() -> usersRepository.findUserByEmail(addUserDTO.email()), EMAIL_IS_ALREADY_TAKEN.formatted(addUserDTO.email()));
+        findByOrThrowException(() -> usersRepository.findUserByPhone(addUserDTO.phone()), PHONE_IS_ALREADY_TAKEN.formatted(addUserDTO.phone()));
     }
 
     private void findByOrThrowException(Supplier<Optional<User>> findUserBy, String exceptionMsg) throws UsersConflictException {

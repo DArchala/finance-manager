@@ -1,8 +1,10 @@
 package pl.archala.entity;
 
 import org.junit.jupiter.api.Test;
+import pl.archala.utils.BigDecimalProvider;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,7 +47,7 @@ class BalanceTest {
         //given
         BigDecimal value1 = BigDecimal.valueOf(50);
         BigDecimal value2 = BigDecimal.valueOf(100);
-        BigDecimal sum = value1.add(value2);
+        BigDecimal sum = BigDecimalProvider.DEFAULT_VALUE.add(value1).add(value2);
 
         Balance balance = new Balance();
 
@@ -86,7 +88,7 @@ class BalanceTest {
         balance.subtract(value);
 
         //then
-        assertEquals(BigDecimal.ZERO, balance.getValue());
+        assertEquals(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP), balance.getValue());
 
     }
 }
