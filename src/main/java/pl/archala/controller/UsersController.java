@@ -18,7 +18,7 @@ public class UsersController {
 
     private final UsersService service;
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<GetUserDTO> save(@Valid @RequestBody AddUserDTO addUserDTO) throws UsersConflictException {
         return ResponseEntity.status(201).body(service.registerUser(addUserDTO));
     }
