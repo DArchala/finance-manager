@@ -21,6 +21,12 @@ public class BalanceIdentifierGenerator implements IdentifierGenerator {
         this.characters = characters;
     }
 
+    /*
+    Generator should check if generated balance id is not already present in the DB
+    but 20-digits password can have 10^20 combinations, so for this demo app it is
+    sufficient, and we do not have to worry about it
+     */
+
     @Override
     public Object generate(SharedSessionContractImplementor session, Object object) {
         StringBuilder sb = new StringBuilder();
