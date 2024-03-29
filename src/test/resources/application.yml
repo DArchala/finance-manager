@@ -15,4 +15,7 @@ spring:
     virtual:
       enabled: true
 transactions-reset-scheduler-cron: "* 0 * * * *"
-balance-id-length: 20
+balance:
+  id:
+    length: 20
+    characters: "0123456789"
