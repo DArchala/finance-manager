@@ -1,7 +1,6 @@
 package pl.archala.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import pl.archala.entity.User;
 
@@ -14,6 +13,4 @@ public interface UsersRepository extends JpaRepository<User, Long> {
     Optional<User> findUserByEmail(String email);
     Optional<User> findUserByPhone(String phone);
 
-    @Query("select distinct u from User u join fetch u.balance where u.username=:username")
-    Optional<User> findUserByUsernameFetchJoinBalance(String username);
 }
