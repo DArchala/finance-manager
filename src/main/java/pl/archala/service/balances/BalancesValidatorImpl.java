@@ -21,7 +21,7 @@ public class BalancesValidatorImpl implements BalancesValidator {
 
     private void validateMinimumBalanceContent(Balance balance, BigDecimal value) throws InsufficientFundsException {
         if (!balance.containsAtLeast(value)) {
-            throw new InsufficientFundsException(INSUFFICIENT_FUNDS.formatted(value.longValueExact()));
+            throw new InsufficientFundsException(INSUFFICIENT_FUNDS.formatted(balance.getId()));
         }
     }
 

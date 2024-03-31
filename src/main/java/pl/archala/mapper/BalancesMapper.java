@@ -8,7 +8,7 @@ import pl.archala.entity.Balance;
 public class BalancesMapper {
 
     public GetBalanceDTO toGetDto(Balance balance) {
-        return new GetBalanceDTO(balance.getId(), balance.getValue());
+        return new GetBalanceDTO(balance.getId(), balance.getValue(), balance.getDailyTransactionsCount());
     }
 
 }
