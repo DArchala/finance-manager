@@ -35,51 +35,31 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return new ResponseEntity<>(errorResponse, errorResponse.status());
     }
 
-    @ExceptionHandler(value = ConstraintViolationException.class)
+    @ExceptionHandler(ConstraintViolationException.class)
     protected ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException e) {
         List<String> reasons = e.getConstraintViolations().stream().map(ConstraintViolation::getMessageTemplate).toList();
         ErrorResponse errorResponse = mapper.toErrorResponse(reasons, HttpStatus.BAD_REQUEST);
         return new ResponseEntity<>(errorResponse, errorResponse.status());
     }
 
-    @ExceptionHandler(value = EntityNotFoundException.class)
+    @ExceptionHandler(EntityNotFoundException.class)
     protected ResponseEntity<ErrorResponse> handlePropertyReferenceException(EntityNotFoundException e) {
         return getErrorResponse(e, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(value = UsersConflictException.class)
+    @ExceptionHandler(UsersConflictException.class)
     protected ResponseEntity<ErrorResponse> handleUserException(UsersConflictException e) {
         return getErrorResponse(e, HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(value = TransactionsLimitException.class)
-    protected ResponseEntity<ErrorResponse> handleTransactionsLimitException(TransactionsLimitException e) {
-        return getErrorResponse(e, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(value = UserException.class)
-    protected ResponseEntity<ErrorResponse> handleUserException(UserException e) {
-        return getErrorResponse(e, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(value = InsufficientFundsException.class)
-    protected ResponseEntity<ErrorResponse> handleInsufficientFundsException(InsufficientFundsException e) {
-        return getErrorResponse(e, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(value = UserAlreadyContainsBalanceException.class)
-    protected ResponseEntity<ErrorResponse> handleUserAlreadyContainsBalance(UserAlreadyContainsBalanceException e) {
-        return getErrorResponse(e, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(value = PropertyReferenceException.class)
-    protected ResponseEntity<ErrorResponse> handleConstraintViolationException(PropertyReferenceException e) {
+    @ExceptionHandler({PropertyReferenceException.class, UserAlreadyContainsBalanceException.class,
+            InsufficientFundsException.class, UserException.class, TransactionsLimitException.class})
+    protected ResponseEntity<ErrorResponse> handleBadRequestExceptions(Exception e) {
         return getErrorResponse(e, HttpStatus.BAD_REQUEST);
     }
 
     private ResponseEntity<ErrorResponse> getErrorResponse(Exception e, HttpStatus status) {
-        List<String> reasons = List.of(e.getMessage());
-        ErrorResponse errorResponse = mapper.toErrorResponse(reasons, status);
+        ErrorResponse errorResponse = mapper.toErrorResponse(List.of(e.getMessage()), status);
         return new ResponseEntity<>(errorResponse, errorResponse.status());
     }
 }
