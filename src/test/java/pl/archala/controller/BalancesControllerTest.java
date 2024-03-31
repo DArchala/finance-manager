@@ -50,8 +50,9 @@ class BalancesControllerTest extends PostgresqlContainer {
                 .returnResult().getResponseBody();
 
         //then
-        assertEquals("1", getBalanceDTO.id());
-        assertEquals(BigDecimal.valueOf(500), getBalanceDTO.value());
+        assertNotNull(getBalanceDTO.id());
+        assertEquals(20, getBalanceDTO.id().length());
+        assertEquals(BigDecimal.valueOf(500).setScale(2, RoundingMode.HALF_UP), getBalanceDTO.value());
 
     }
 

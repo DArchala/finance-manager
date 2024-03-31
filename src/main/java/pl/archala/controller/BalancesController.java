@@ -3,14 +3,20 @@ package pl.archala.controller;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import pl.archala.components.NotificationFactory;
 import pl.archala.dto.balance.GetBalanceDTO;
-import pl.archala.dto.user.UserNotificationData;
 import pl.archala.enums.BalanceCode;
-import pl.archala.exception.*;
+import pl.archala.exception.InsufficientFundsException;
+import pl.archala.exception.TransactionsLimitException;
+import pl.archala.exception.UserAlreadyContainsBalanceException;
+import pl.archala.exception.UserException;
 import pl.archala.service.balances.BalancesService;
 import pl.archala.service.users.UsersService;
 
@@ -21,6 +27,7 @@ import java.security.Principal;
 @RestController
 @RequestMapping("/api/balances")
 @RequiredArgsConstructor
+@Slf4j
 public class BalancesController {
 
     private final BalancesService balancesService;
@@ -30,7 +37,9 @@ public class BalancesController {
     @PostMapping
     public ResponseEntity<GetBalanceDTO> create(@RequestParam BalanceCode code, Principal principal)
             throws UserAlreadyContainsBalanceException {
-        return ResponseEntity.status(201).body(balancesService.create(code, principal.getName()));
+        var getBalanceDTO = ResponseEntity.status(201).body(balancesService.create(code, principal.getName()));
+        log.info("Balance with id {} has been created with value {} for user {}", getBalanceDTO.getBody().id(), code.getValue(), principal.getName());
+        return getBalanceDTO;
     }
 
     @PostMapping("/transaction")
@@ -41,8 +50,8 @@ public class BalancesController {
                                          @Digits(integer = 10, fraction = 2, message = "Value should has a maximum of 2 decimal digits") BigDecimal value,
                                          Principal principal)
             throws InsufficientFundsException, TransactionsLimitException, UserException {
-        GetBalanceDTO getBalanceDTO = balancesService.makeTransaction(sourceBalanceId, targetBalanceId, value, principal.getName());
-        UserNotificationData userNotificationData = usersService.getUserNotificationData(principal.getName());
+        var getBalanceDTO = balancesService.makeTransaction(sourceBalanceId, targetBalanceId, value, principal.getName());
+        var userNotificationData = usersService.getUserNotificationData(principal.getName());
         notificationFactory.execute(userNotificationData, value, targetBalanceId, getBalanceDTO.value());
         return getBalanceDTO;
     }
