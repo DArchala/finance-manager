@@ -28,9 +28,9 @@ public class BalancesController {
     private final NotificationFactory notificationFactory;
 
     @PostMapping
-    public ResponseEntity<GetBalanceDTO> create(@RequestParam BalanceCode balanceCode, Principal principal)
+    public ResponseEntity<GetBalanceDTO> create(@RequestParam BalanceCode code, Principal principal)
             throws UserAlreadyContainsBalanceException {
-        return ResponseEntity.status(201).body(balancesService.create(balanceCode, principal.getName()));
+        return ResponseEntity.status(201).body(balancesService.create(code, principal.getName()));
     }
 
     @PostMapping("/transaction")

@@ -7,12 +7,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer;
-import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import pl.archala.repository.UsersRepository;
 
 import static pl.archala.utils.ExceptionInfoProvider.USER_WITH_USERNAME_DOES_NOT_EXIST;
@@ -23,6 +23,8 @@ import static pl.archala.utils.ExceptionInfoProvider.USER_WITH_USERNAME_DOES_NOT
 public class WebSecurityConfig {
 
     private final UsersRepository usersRepository;
+    private final AuthenticationSuccessHandler successLoginHandler;
+    private final LogoutSuccessHandler successLogoutHandler;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -32,8 +34,10 @@ public class WebSecurityConfig {
                         .requestMatchers("/api/users/register").permitAll()
                         .anyRequest().authenticated()
                 )
-                .formLogin(FormLoginConfigurer::permitAll)
-                .logout(LogoutConfigurer::permitAll)
+                .formLogin(login -> login.permitAll()
+                        .successHandler(successLoginHandler))
+                .logout(logout -> logout.permitAll()
+                        .logoutSuccessHandler(successLogoutHandler))
                 .sessionManagement(s -> s.maximumSessions(1));
 
         return http.build();
