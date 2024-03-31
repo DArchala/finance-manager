@@ -27,6 +27,7 @@ public class Balance {
 
     private volatile BigDecimal value = BigDecimalProvider.DEFAULT_VALUE;
 
+    @EqualsAndHashCode.Exclude
     @Setter
     @OneToOne(mappedBy = "balance", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private User user;

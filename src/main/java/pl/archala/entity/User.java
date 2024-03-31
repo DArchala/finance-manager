@@ -2,6 +2,7 @@ package pl.archala.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,6 +36,7 @@ public class User implements UserDetails {
     @Enumerated(value = EnumType.STRING)
     private NotificationChannel notificationChannel;
 
+    @EqualsAndHashCode.Exclude
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "balance_id")
     private Balance balance;
