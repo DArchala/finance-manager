@@ -10,7 +10,7 @@ import pl.archala.entity.User;
 import pl.archala.enums.BalanceCode;
 import pl.archala.exception.InsufficientFundsException;
 import pl.archala.exception.TransactionsLimitException;
-import pl.archala.exception.UserAlreadyContainsBalance;
+import pl.archala.exception.UserAlreadyContainsBalanceException;
 import pl.archala.exception.UserException;
 import pl.archala.mapper.BalancesMapper;
 import pl.archala.repository.BalancesRepository;
@@ -31,11 +31,11 @@ public class BalancesServiceImpl implements BalancesService {
     private final UsersRepository usersRepository;
 
     @Override
-    public GetBalanceDTO create(BalanceCode balanceCode, String username) throws UserAlreadyContainsBalance {
+    public GetBalanceDTO create(BalanceCode balanceCode, String username) throws UserAlreadyContainsBalanceException {
         User user = usersRepository.findUserByUsername(username).orElseThrow(() -> new EntityNotFoundException(USER_WITH_USERNAME_DOES_NOT_EXIST.formatted(username)));
 
         if (user.getBalance() != null) {
-            throw new UserAlreadyContainsBalance(USER_ALREADY_CONTAINS_BALANCE.formatted(user.getUsername()));
+            throw new UserAlreadyContainsBalanceException(USER_ALREADY_CONTAINS_BALANCE.formatted(user.getUsername()));
         }
 
         Balance balance = new Balance();

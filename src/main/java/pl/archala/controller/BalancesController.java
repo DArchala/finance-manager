@@ -29,7 +29,7 @@ public class BalancesController {
 
     @PostMapping
     public ResponseEntity<GetBalanceDTO> create(@RequestParam BalanceCode balanceCode, Principal principal)
-            throws UserAlreadyContainsBalance {
+            throws UserAlreadyContainsBalanceException {
         return ResponseEntity.status(201).body(balancesService.create(balanceCode, principal.getName()));
     }
 

@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 
 public interface BalancesService {
 
-    GetBalanceDTO create(BalanceCode balanceCode, String username) throws UserAlreadyContainsBalance;
+    GetBalanceDTO create(BalanceCode balanceCode, String username) throws UserAlreadyContainsBalanceException;
 
     GetBalanceDTO makeTransaction(String sourceBalanceId, String targetBalanceId, BigDecimal value, String username) throws InsufficientFundsException, TransactionsLimitException, UserException;
 }
