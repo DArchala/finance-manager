@@ -24,3 +24,4 @@ services:
       - dev.env
     profiles:
       - dev
+      - dep
