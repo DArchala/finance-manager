@@ -40,6 +40,9 @@ public class Balance {
     }
 
     public synchronized void add(BigDecimal value) {
+        if (value.compareTo(BigDecimal.ZERO) < 0) {
+            throw new ArithmeticException("It is unavailable to add negative value to balance");
+        }
         this.value = this.value.add(value);
     }
 

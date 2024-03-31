@@ -91,4 +91,28 @@ class BalanceTest {
         assertEquals(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP), balance.getValue());
 
     }
+
+    @Test
+    void addingNegativeNumbersShouldThrowException() {
+        //given
+        BigDecimal negativeValue = BigDecimal.valueOf(-50);
+        Balance balance = new Balance();
+
+        //when
+        //then
+        assertThrows(ArithmeticException.class, () -> balance.add(negativeValue));
+    }
+
+    @Test
+    void addingPositiveOrZeroValueShouldNotThrowException() {
+        //given
+        BigDecimal zero = BigDecimal.ZERO;
+        BigDecimal positiveValue = BigDecimal.valueOf(50);
+        Balance balance = new Balance();
+
+        //when
+        //then
+        assertDoesNotThrow(() -> balance.add(zero));
+        assertDoesNotThrow(() -> balance.add(positiveValue));
+    }
 }
