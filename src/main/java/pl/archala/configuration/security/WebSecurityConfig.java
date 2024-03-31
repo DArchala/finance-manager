@@ -33,7 +33,6 @@ public class WebSecurityConfig {
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
-                .sessionManagement(s -> s.maximumSessions(1))
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();
