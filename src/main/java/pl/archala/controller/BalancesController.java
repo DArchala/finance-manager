@@ -39,7 +39,7 @@ public class BalancesController {
                                          @RequestParam @DecimalMin(value = "0.0", inclusive = false,
                                                  message = "Value to transact must be bigger than 0")
                                          @Digits(integer = 10, fraction = 2, message = "Value should has a maximum of 2 decimal digits") BigDecimal value,
-                                         @RequestParam Principal principal)
+                                         Principal principal)
             throws InsufficientFundsException, TransactionsLimitException, UserException {
         GetBalanceDTO getBalanceDTO = balancesService.makeTransaction(sourceBalanceId, targetBalanceId, value, principal.getName());
         UserNotificationData userNotificationData = usersService.getUserNotificationData(principal.getName());

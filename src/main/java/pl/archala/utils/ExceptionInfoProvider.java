@@ -11,5 +11,6 @@ public final class ExceptionInfoProvider {
     public static final String PHONE_IS_ALREADY_TAKEN = "Provided phone %s is already taken";
     public static final String TRANSACTIONS_LIMIT_EXCEEDED = "Balance with id %d exceeded the daily transaction limit";
     public static final String INVALID_SOURCE_BALANCE = "Provided source balance with id %s does not match your balance.";
+    public static final String USER_DOES_NOT_HAVE_BALANCE = "User %s does not have balance.";
 
 }

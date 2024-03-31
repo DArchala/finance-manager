@@ -1,6 +1,5 @@
 package pl.archala.controller;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +16,8 @@ import pl.archala.enums.BalanceCode;
 import pl.archala.enums.NotificationChannel;
 
 import java.math.BigDecimal;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {FinanceManagerApplicationTests.class})
@@ -47,8 +48,8 @@ class BalancesControllerTest extends PostgresqlContainer {
                 .returnResult().getResponseBody();
 
         //then
-        Assertions.assertEquals(1L, getBalanceDTO.id());
-        Assertions.assertEquals(BigDecimal.valueOf(500), getBalanceDTO.value());
+        assertEquals("1", getBalanceDTO.id());
+        assertEquals(BigDecimal.valueOf(500), getBalanceDTO.value());
 
     }
 
@@ -80,10 +81,41 @@ class BalancesControllerTest extends PostgresqlContainer {
                 .returnResult().getResponseBody();
 
         //then
-        Assertions.assertEquals(HttpStatus.BAD_REQUEST, errorResponse.status());
-        Assertions.assertEquals(1, errorResponse.reasons().size());
-        Assertions.assertEquals(expectedErrorMsg, errorResponse.reasons().getFirst());
+        assertEquals(HttpStatus.BAD_REQUEST, errorResponse.status());
+        assertEquals(1, errorResponse.reasons().size());
+        assertEquals(expectedErrorMsg, errorResponse.reasons().getFirst());
+        assertNotNull(errorResponse.occurred());
 
+    }
+
+    @Test
+    void shouldThrowExceptionIfUserSendMoneyWithoutCreatedBalance() {
+        //given
+        String username = "user111";
+        String password = "passworD1@";
+        AddUserDTO addUserDTO1 = new AddUserDTO(username, password, "111333555", "email1@wp.pl", NotificationChannel.SMS);
+        String expectedErrorMsg = "User %s does not have balance.".formatted(username);
+
+        //when
+        rest.post().uri("/api/users/register").bodyValue(addUserDTO1)
+                .exchange()
+                .expectStatus().isCreated();
+
+        ErrorResponse errorResponse = rest.post().uri(uriBuilder -> uriBuilder.path("/api/balances/transaction")
+                        .queryParam("sourceBalanceId", "1")
+                        .queryParam("targetBalanceId", "2")
+                        .queryParam("value", BigDecimal.valueOf(50))
+                        .build())
+                .headers(headers -> headers.setBasicAuth(username, password)).exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorResponse.class)
+                .returnResult().getResponseBody();
+
+        //then
+        assertEquals(1, errorResponse.reasons().size());
+        assertEquals(expectedErrorMsg, errorResponse.reasons().getFirst());
+        assertEquals(HttpStatus.BAD_REQUEST, errorResponse.status());
+        assertNotNull(errorResponse.occurred());
 
     }
 
