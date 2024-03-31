@@ -33,7 +33,8 @@ public class WebSecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .formLogin(FormLoginConfigurer::permitAll)
-                .logout(LogoutConfigurer::permitAll);
+                .logout(LogoutConfigurer::permitAll)
+                .sessionManagement(s -> s.maximumSessions(1));
 
         return http.build();
     }
