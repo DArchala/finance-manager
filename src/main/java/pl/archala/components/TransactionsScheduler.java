@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import pl.archala.repository.BalancesRepository;
 
+import java.time.LocalDateTime;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -21,7 +23,7 @@ public class TransactionsScheduler {
     public void resetTransactionsLimits() {
         log.info("All transactions limits are resetting to 0...");
         balancesRepository.resetTransactionsForAllBalances();
-        log.info("Transactions limits reset done.");
+        log.info("Transactions limits reset done {}", LocalDateTime.now());
     }
 
 }
