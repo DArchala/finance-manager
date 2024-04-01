@@ -12,8 +12,6 @@ services:
       - postgres
     env_file:
       - dev.env
-    profiles:
-      - dev
 
   postgres:
     image: postgres:16
@@ -22,6 +20,3 @@ services:
       - "15432:5432"
     env_file:
       - dev.env
-    profiles:
-      - dev
-      - dep

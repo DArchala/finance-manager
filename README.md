@@ -9,10 +9,10 @@ Application allows to create user account, create user balance, send money to an
 - JUnit 5
 ## How to run?
 ### IntelliJ IDEA + Docker
-1. Run `docker-compose -f etc/docker-compose.yaml --profile dep up -d`
+1. Run `docker-compose -f etc/docker-compose.yaml up -d postgres`
 2. Run `pl.archala.FinanceManagerApplication.java`
 ### Docker
-1. Run `docker-compose -f etc/docker-compose.yaml --profile dev up -d`
+1. Run `docker-compose -f etc/docker-compose.yaml up -d`
 ## How to use?
 1. There is no login/logout page.
 2. To register user use POST /api/users/register.
