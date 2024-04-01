@@ -37,9 +37,9 @@ public class BalancesController {
     @PostMapping
     public ResponseEntity<GetBalanceDTO> create(@RequestParam BalanceCode code, Principal principal)
             throws UserAlreadyContainsBalanceException {
-        var getBalanceDTO = ResponseEntity.status(201).body(balancesService.create(code, principal.getName()));
-        log.info("Balance with id {} has been created with value {} for user {}", getBalanceDTO.getBody().id(), code.getValue(), principal.getName());
-        return getBalanceDTO;
+        GetBalanceDTO getBalanceDTO = balancesService.create(code, principal.getName());
+        log.info("Balance with id {} has been created with value {} for user {}", getBalanceDTO.id(), code.getValue(), principal.getName());
+        return ResponseEntity.status(201).body(getBalanceDTO);
     }
 
     @PostMapping("/transaction")

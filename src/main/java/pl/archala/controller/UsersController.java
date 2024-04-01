@@ -24,9 +24,9 @@ public class UsersController {
 
     @PostMapping("/register")
     public ResponseEntity<GetUserDTO> save(@Valid @RequestBody AddUserDTO addUserDTO) throws UsersConflictException {
-        var getUserDTO = ResponseEntity.status(201).body(service.registerUser(addUserDTO));
-        log.info("User {} has been registered", Objects.requireNonNull(getUserDTO.getBody()).username());
-        return getUserDTO;
+        GetUserDTO getUserDTO = service.registerUser(addUserDTO);
+        log.info("User {} has been registered", Objects.requireNonNull(getUserDTO).username());
+        return ResponseEntity.status(201).body(getUserDTO);
     }
 
 }
