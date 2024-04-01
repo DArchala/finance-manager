@@ -43,12 +43,12 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    protected ResponseEntity<ErrorResponse> handlePropertyReferenceException(EntityNotFoundException e) {
+    protected ResponseEntity<ErrorResponse> handleEntityNotFoundException(EntityNotFoundException e) {
         return getErrorResponse(e, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(UsersConflictException.class)
-    protected ResponseEntity<ErrorResponse> handleUserException(UsersConflictException e) {
+    protected ResponseEntity<ErrorResponse> handleUsersConflictException(UsersConflictException e) {
         return getErrorResponse(e, HttpStatus.CONFLICT);
     }
 
