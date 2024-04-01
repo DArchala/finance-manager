@@ -333,4 +333,89 @@ class BalancesControllerTest extends PostgresqlContainer {
         assertEquals(HttpStatus.BAD_REQUEST, errorResponse.status());
 
     }
+
+    @Test
+    void shouldThrowExceptionIfValueToSendIsInvalid() {
+        //given
+        BalanceCode code = BalanceCode.KOD_1;
+        String username1 = "user111";
+        String username2 = "user222";
+        String password = "passworD1@";
+        AddUserDTO addUserDTO1 = new AddUserDTO(username1, password, "111333555", "email1@wp.pl", NotificationChannel.SMS);
+        AddUserDTO addUserDTO2 = new AddUserDTO(username2, password, "222444666", "email2@wp.pl", NotificationChannel.EMAIL);
+
+        String expectedZeroValueErrorMsg = "Value to transact must be bigger than 0";
+        String invalidValueFormatErrorMsg = "Value should contains max 10 digits before comma and max 2 after.";
+
+
+        //when
+        rest.post().uri("/api/users/register").bodyValue(addUserDTO1)
+                .exchange()
+                .expectStatus().isCreated();
+
+        rest.post().uri("/api/users/register").bodyValue(addUserDTO2)
+                .exchange()
+                .expectStatus().isCreated();
+
+        GetBalanceDTO userBalance1 = rest.post().uri(uriBuilder -> uriBuilder.path("/api/balances")
+                        .queryParam("code", code).build())
+                .headers(headers -> headers.setBasicAuth(username1, password)).exchange()
+                .expectStatus().isCreated()
+                .expectBody(GetBalanceDTO.class)
+                .returnResult().getResponseBody();
+
+        GetBalanceDTO userBalance2 = rest.post().uri(uriBuilder -> uriBuilder.path("/api/balances")
+                        .queryParam("code", code).build())
+                .headers(headers -> headers.setBasicAuth(username2, password)).exchange()
+                .expectStatus().isCreated()
+                .expectBody(GetBalanceDTO.class)
+                .returnResult().getResponseBody();
+
+        ErrorResponse zeroValueError = rest.post().uri(uriBuilder -> uriBuilder.path("/api/balances/transaction")
+                        .queryParam("sourceBalanceId", userBalance1.id())
+                        .queryParam("targetBalanceId", userBalance2.id())
+                        .queryParam("value", BigDecimal.valueOf(0.0))
+                        .build())
+                .headers(headers -> headers.setBasicAuth(username1, password)).exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorResponse.class)
+                .returnResult().getResponseBody();
+
+        ErrorResponse moreThanTwoDigitsAfterCommaError = rest.post().uri(uriBuilder -> uriBuilder.path("/api/balances/transaction")
+                        .queryParam("sourceBalanceId", userBalance1.id())
+                        .queryParam("targetBalanceId", userBalance2.id())
+                        .queryParam("value", BigDecimal.valueOf(1.001))
+                        .build())
+                .headers(headers -> headers.setBasicAuth(username1, password)).exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorResponse.class)
+                .returnResult().getResponseBody();
+
+        ErrorResponse moreThanTenDigitsBeforeCommaError = rest.post().uri(uriBuilder -> uriBuilder.path("/api/balances/transaction")
+                        .queryParam("sourceBalanceId", userBalance1.id())
+                        .queryParam("targetBalanceId", userBalance2.id())
+                        .queryParam("value", BigDecimal.valueOf(10000000000L))
+                        .build())
+                .headers(headers -> headers.setBasicAuth(username1, password)).exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(ErrorResponse.class)
+                .returnResult().getResponseBody();
+
+        //then
+        assertEquals(1L, zeroValueError.reasons().size());
+        assertEquals(expectedZeroValueErrorMsg, zeroValueError.reasons().getFirst());
+        assertEquals(HttpStatus.BAD_REQUEST, zeroValueError.status());
+        assertNotNull(zeroValueError.occurred());
+
+        assertEquals(1L, moreThanTwoDigitsAfterCommaError.reasons().size());
+        assertEquals(invalidValueFormatErrorMsg, moreThanTwoDigitsAfterCommaError.reasons().getFirst());
+        assertEquals(HttpStatus.BAD_REQUEST, moreThanTwoDigitsAfterCommaError.status());
+        assertNotNull(moreThanTwoDigitsAfterCommaError.occurred());
+
+        assertEquals(1L, moreThanTenDigitsBeforeCommaError.reasons().size());
+        assertEquals(invalidValueFormatErrorMsg, moreThanTenDigitsBeforeCommaError.reasons().getFirst());
+        assertEquals(HttpStatus.BAD_REQUEST, moreThanTenDigitsBeforeCommaError.status());
+        assertNotNull(moreThanTenDigitsBeforeCommaError.occurred());
+
+    }
 }
