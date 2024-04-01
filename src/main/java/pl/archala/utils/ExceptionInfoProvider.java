@@ -12,5 +12,6 @@ public final class ExceptionInfoProvider {
     public static final String TRANSACTIONS_LIMIT_EXCEEDED = "Balance with id %s exceeded the daily transaction limit";
     public static final String INVALID_SOURCE_BALANCE = "Provided source balance with id %s does not match your balance.";
     public static final String USER_DOES_NOT_HAVE_BALANCE = "User with name %s does not have balance.";
+    public static final String UNSUPPORTED_NOTIFICATION_TYPE = "Unsupported notification type: %s";
 
 }

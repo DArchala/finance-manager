@@ -53,7 +53,8 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     }
 
     @ExceptionHandler({PropertyReferenceException.class, UserAlreadyContainsBalanceException.class,
-            InsufficientFundsException.class, UserException.class, TransactionsLimitException.class})
+            InsufficientFundsException.class, UserException.class, TransactionsLimitException.class,
+            UnsupportedNotificationTypeException.class})
     protected ResponseEntity<ErrorResponse> handleBadRequestExceptions(Exception e) {
         return getErrorResponse(e, HttpStatus.BAD_REQUEST);
     }

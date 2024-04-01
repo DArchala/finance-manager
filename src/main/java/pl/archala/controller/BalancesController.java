@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.archala.components.NotificationFactory;
 import pl.archala.dto.balance.GetBalanceDTO;
 import pl.archala.enums.BalanceCode;
-import pl.archala.exception.InsufficientFundsException;
-import pl.archala.exception.TransactionsLimitException;
-import pl.archala.exception.UserAlreadyContainsBalanceException;
-import pl.archala.exception.UserException;
+import pl.archala.exception.*;
 import pl.archala.service.balances.BalancesService;
 import pl.archala.service.users.UsersService;
 
@@ -49,7 +46,7 @@ public class BalancesController {
                                                  message = "Value to transact must be bigger than 0")
                                          @Digits(integer = 10, fraction = 2, message = "Value must contains max 10 digits before comma and max 2 after.") BigDecimal value,
                                          Principal principal)
-            throws InsufficientFundsException, TransactionsLimitException, UserException {
+            throws InsufficientFundsException, TransactionsLimitException, UserException, UnsupportedNotificationTypeException {
         var getBalanceDTO = balancesService.makeTransaction(sourceBalanceId, targetBalanceId, value, principal.getName());
         var userNotificationData = usersService.getUserNotificationData(principal.getName());
         notificationFactory.execute(userNotificationData, value, targetBalanceId, getBalanceDTO.value());
