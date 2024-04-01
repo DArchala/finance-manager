@@ -20,11 +20,11 @@ import java.util.Objects;
 @Slf4j
 public class UsersController {
 
-    private final UsersService service;
+    private final UsersService usersService;
 
     @PostMapping("/register")
-    public ResponseEntity<GetUserDTO> save(@Valid @RequestBody AddUserDTO addUserDTO) throws UsersConflictException {
-        GetUserDTO getUserDTO = service.registerUser(addUserDTO);
+    public ResponseEntity<GetUserDTO> register(@Valid @RequestBody AddUserDTO addUserDTO) throws UsersConflictException {
+        GetUserDTO getUserDTO = usersService.registerUser(addUserDTO);
         log.info("User {} has been registered", Objects.requireNonNull(getUserDTO).username());
         return ResponseEntity.status(201).body(getUserDTO);
     }

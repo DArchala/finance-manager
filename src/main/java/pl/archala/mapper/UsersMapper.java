@@ -10,7 +10,7 @@ import pl.archala.entity.User;
 
 @Component
 @RequiredArgsConstructor
-public class UserMapper {
+public class UsersMapper {
 
     private final PasswordEncoder passwordEncoder;
 

@@ -1,4 +1,4 @@
-package pl.archala.configuration.security;
+package pl.archala.configuration;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;

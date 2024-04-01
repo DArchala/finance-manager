@@ -7,8 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 import pl.archala.dto.user.AddUserDTO;
 import pl.archala.dto.user.GetUserDTO;
 import pl.archala.dto.user.UserNotificationData;
+import pl.archala.entity.User;
 import pl.archala.exception.UsersConflictException;
-import pl.archala.mapper.UserMapper;
+import pl.archala.mapper.UsersMapper;
 import pl.archala.repository.UsersRepository;
 
 import static pl.archala.utils.ExceptionInfoProvider.USER_WITH_USERNAME_DOES_NOT_EXIST;
@@ -20,17 +21,18 @@ public class UsersServiceImpl implements UsersService {
 
     private final UsersRepository usersRepository;
     private final UsersValidator usersValidator;
-    private final UserMapper userMapper;
+    private final UsersMapper usersMapper;
 
     @Override
     public GetUserDTO registerUser(AddUserDTO addUserDTO) throws UsersConflictException {
         usersValidator.validateUsersConflicts(addUserDTO);
-        return userMapper.toGetDto(usersRepository.save(userMapper.toEntity(addUserDTO)));
+        User savedUser = usersRepository.save(usersMapper.toEntity(addUserDTO));
+        return usersMapper.toGetDto(savedUser);
     }
 
     @Override
     public UserNotificationData getUserNotificationData(String username) {
-        return userMapper.toUserNotificationDTO(usersRepository.findUserByUsername(username).orElseThrow(
+        return usersMapper.toUserNotificationDTO(usersRepository.findUserByUsername(username).orElseThrow(
                 () -> new EntityNotFoundException(USER_WITH_USERNAME_DOES_NOT_EXIST.formatted(username))
         ));
     }

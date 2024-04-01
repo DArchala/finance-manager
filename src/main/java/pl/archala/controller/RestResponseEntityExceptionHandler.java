@@ -1,4 +1,4 @@
-package pl.archala.configuration;
+package pl.archala.controller;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.ConstraintViolation;
