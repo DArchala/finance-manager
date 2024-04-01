@@ -345,7 +345,7 @@ class BalancesControllerTest extends PostgresqlContainer {
         AddUserDTO addUserDTO2 = new AddUserDTO(username2, password, "222444666", "email2@wp.pl", NotificationChannel.EMAIL);
 
         String expectedZeroValueErrorMsg = "Value to transact must be bigger than 0";
-        String invalidValueFormatErrorMsg = "Value should contains max 10 digits before comma and max 2 after.";
+        String invalidValueFormatErrorMsg = "Value must contains max 10 digits before comma and max 2 after.";
 
 
         //when

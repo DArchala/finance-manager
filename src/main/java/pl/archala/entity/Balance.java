@@ -3,7 +3,6 @@ package pl.archala.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,10 +11,10 @@ import pl.archala.generator.BalanceIdentifierGenerator;
 import pl.archala.utils.BigDecimalProvider;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Getter
 @NoArgsConstructor
-@EqualsAndHashCode
 @Table(name = "balances")
 @Entity
 public class Balance {
@@ -27,7 +26,6 @@ public class Balance {
 
     private volatile BigDecimal value = BigDecimalProvider.DEFAULT_VALUE;
 
-    @EqualsAndHashCode.Exclude
     @Setter
     @OneToOne(mappedBy = "balance", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private User user;
@@ -53,5 +51,17 @@ public class Balance {
 
     public synchronized void incrementTransactions() {
         dailyTransactionsCount++;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (!(object instanceof Balance balance)) return false;
+        return dailyTransactionsCount == balance.dailyTransactionsCount && Objects.equals(id, balance.id) && Objects.equals(value, balance.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, value, dailyTransactionsCount);
     }
 }
