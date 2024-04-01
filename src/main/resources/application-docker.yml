@@ -7,8 +7,6 @@ spring:
     show-sql: ${SHOW_SQL}
     hibernate:
       ddl-auto: ${HIBERNATE_DDL_AUTO}
-  flyway:
-    baseline-on-migrate: ${FLYWAY_BASELINE_ON_MIGRATE}
   threads:
     virtual:
       enabled: ${VIRTUAL_THREADS_ENABLED}
