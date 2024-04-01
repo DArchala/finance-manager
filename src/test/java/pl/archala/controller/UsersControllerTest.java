@@ -24,7 +24,7 @@ import static pl.archala.utils.ExceptionInfoProvider.*;
 class UsersControllerTest extends PostgresqlContainer {
 
     @Autowired
-    private WebTestClient rest;
+    private WebTestClient webTestClient;
 
     @Test
     void shouldReturnAddedUserDto() {
@@ -37,7 +37,7 @@ class UsersControllerTest extends PostgresqlContainer {
         AddUserDTO addUserDTO = new AddUserDTO(username, password, phone, email, channel);
 
         //when
-        GetUserDTO getUserDTO = rest.post().uri("/api/users/register").bodyValue(addUserDTO).exchange()
+        GetUserDTO getUserDTO = webTestClient.post().uri("/api/users/register").bodyValue(addUserDTO).exchange()
                 .expectStatus().isCreated()
                 .expectBody(GetUserDTO.class)
                 .returnResult().getResponseBody();
@@ -68,20 +68,20 @@ class UsersControllerTest extends PostgresqlContainer {
 
         //when
         //then
-        rest.post().uri("/api/users/register").bodyValue(addUserDTO1).exchange()
+        webTestClient.post().uri("/api/users/register").bodyValue(addUserDTO1).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
                 .value(err -> err.status().equals(HttpStatus.BAD_REQUEST))
                 .value(err -> Objects.equals(err.reasons().size(), 2))
                 .value(err -> err.reasons().containsAll(List.of(invalidUsernameMsg, blankUsernameMsg)));
 
-        rest.post().uri("/api/users/register").bodyValue(addUserDTO2).exchange()
+        webTestClient.post().uri("/api/users/register").bodyValue(addUserDTO2).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
                 .value(err -> Objects.equals(err.reasons().size(), 1))
                 .value(err -> err.reasons().contains(invalidUsernameMsg));
 
-        rest.post().uri("/api/users/register").bodyValue(addUserDTO3).exchange()
+        webTestClient.post().uri("/api/users/register").bodyValue(addUserDTO3).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
                 .value(err -> Objects.equals(err.reasons().size(), 1))
@@ -107,35 +107,35 @@ class UsersControllerTest extends PostgresqlContainer {
 
         //when
         //then
-        rest.post().uri("/api/users/register").bodyValue(blankPassUser).exchange()
+        webTestClient.post().uri("/api/users/register").bodyValue(blankPassUser).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
                 .value(err -> err.status().equals(HttpStatus.BAD_REQUEST))
                 .value(err -> Objects.equals(err.reasons().size(), 2))
                 .value(err -> err.reasons().containsAll(List.of(invalidPasswordMsg, blankPasswordMsg)));
 
-        rest.post().uri("/api/users/register").bodyValue(longPassUser).exchange()
+        webTestClient.post().uri("/api/users/register").bodyValue(longPassUser).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
                 .value(err -> err.status().equals(HttpStatus.BAD_REQUEST))
                 .value(err -> Objects.equals(err.reasons().size(), 1))
                 .value(err -> err.reasons().contains(invalidPasswordMsg));
 
-        rest.post().uri("/api/users/register").bodyValue(noSpecialUser).exchange()
+        webTestClient.post().uri("/api/users/register").bodyValue(noSpecialUser).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
                 .value(err -> err.status().equals(HttpStatus.BAD_REQUEST))
                 .value(err -> Objects.equals(err.reasons().size(), 1))
                 .value(err -> err.reasons().contains(invalidPasswordMsg));
 
-        rest.post().uri("/api/users/register").bodyValue(noDigitUser).exchange()
+        webTestClient.post().uri("/api/users/register").bodyValue(noDigitUser).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
                 .value(err -> err.status().equals(HttpStatus.BAD_REQUEST))
                 .value(err -> Objects.equals(err.reasons().size(), 1))
                 .value(err -> err.reasons().contains(invalidPasswordMsg));
 
-        rest.post().uri("/api/users/register").bodyValue(notAllowedCharsInPassUser).exchange()
+        webTestClient.post().uri("/api/users/register").bodyValue(notAllowedCharsInPassUser).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
                 .value(err -> err.status().equals(HttpStatus.BAD_REQUEST))
@@ -160,21 +160,21 @@ class UsersControllerTest extends PostgresqlContainer {
 
         //when
         //then
-        rest.post().uri("/api/users/register").bodyValue(blankPhoneUser).exchange()
+        webTestClient.post().uri("/api/users/register").bodyValue(blankPhoneUser).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
                 .value(err -> err.status().equals(HttpStatus.BAD_REQUEST))
                 .value(err -> Objects.equals(err.reasons().size(), 2))
                 .value(err -> err.reasons().containsAll(List.of(blankPhoneMsg, invalidPhoneMsg)));
 
-        rest.post().uri("/api/users/register").bodyValue(invalidPhone1User).exchange()
+        webTestClient.post().uri("/api/users/register").bodyValue(invalidPhone1User).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
                 .value(err -> err.status().equals(HttpStatus.BAD_REQUEST))
                 .value(err -> Objects.equals(err.reasons().size(), 1))
                 .value(err -> err.reasons().contains(invalidPhoneMsg));
 
-        rest.post().uri("/api/users/register").bodyValue(invalidPhone2User).exchange()
+        webTestClient.post().uri("/api/users/register").bodyValue(invalidPhone2User).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
                 .value(err -> err.status().equals(HttpStatus.BAD_REQUEST))
@@ -202,7 +202,7 @@ class UsersControllerTest extends PostgresqlContainer {
 
         //when
         //then
-        rest.post().uri("/api/users/register").bodyValue(blankEmailUser).exchange()
+        webTestClient.post().uri("/api/users/register").bodyValue(blankEmailUser).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
                 .value(err -> err.status().equals(HttpStatus.BAD_REQUEST))
@@ -210,7 +210,7 @@ class UsersControllerTest extends PostgresqlContainer {
                 .value(err -> err.reasons().contains(blankEmailMsg))
                 .returnResult().getResponseBody();
 
-        rest.post().uri("/api/users/register").bodyValue(invalidEmailUser1).exchange()
+        webTestClient.post().uri("/api/users/register").bodyValue(invalidEmailUser1).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
                 .value(err -> err.status().equals(HttpStatus.BAD_REQUEST))
@@ -218,7 +218,7 @@ class UsersControllerTest extends PostgresqlContainer {
                 .value(err -> err.reasons().contains(invalidEmailMsg))
                 .returnResult().getResponseBody();
 
-        rest.post().uri("/api/users/register").bodyValue(invalidEmailUser2).exchange()
+        webTestClient.post().uri("/api/users/register").bodyValue(invalidEmailUser2).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
                 .value(err -> err.status().equals(HttpStatus.BAD_REQUEST))
@@ -226,7 +226,7 @@ class UsersControllerTest extends PostgresqlContainer {
                 .value(err -> err.reasons().contains(invalidEmailMsg))
                 .returnResult().getResponseBody();
 
-        rest.post().uri("/api/users/register").bodyValue(invalidEmailUser3).exchange()
+        webTestClient.post().uri("/api/users/register").bodyValue(invalidEmailUser3).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
                 .value(err -> err.status().equals(HttpStatus.BAD_REQUEST))
@@ -234,7 +234,7 @@ class UsersControllerTest extends PostgresqlContainer {
                 .value(err -> err.reasons().contains(invalidEmailMsg))
                 .returnResult().getResponseBody();
 
-        rest.post().uri("/api/users/register").bodyValue(invalidEmailUser4).exchange()
+        webTestClient.post().uri("/api/users/register").bodyValue(invalidEmailUser4).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
                 .value(err -> err.status().equals(HttpStatus.BAD_REQUEST))
@@ -242,7 +242,7 @@ class UsersControllerTest extends PostgresqlContainer {
                 .value(err -> err.reasons().contains(invalidEmailMsg))
                 .returnResult().getResponseBody();
 
-        rest.post().uri("/api/users/register").bodyValue(invalidEmailUser5).exchange()
+        webTestClient.post().uri("/api/users/register").bodyValue(invalidEmailUser5).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
                 .value(err -> err.status().equals(HttpStatus.BAD_REQUEST))
@@ -263,12 +263,12 @@ class UsersControllerTest extends PostgresqlContainer {
 
         //when
         //then
-        rest.post().uri("/api/users/register").bodyValue(addUserDTO1).exchange()
+        webTestClient.post().uri("/api/users/register").bodyValue(addUserDTO1).exchange()
                 .expectStatus().isCreated()
                 .expectBody(GetUserDTO.class)
                 .returnResult().getResponseBody();
 
-        rest.post().uri("/api/users/register").bodyValue(addUserDTO2).exchange()
+        webTestClient.post().uri("/api/users/register").bodyValue(addUserDTO2).exchange()
                 .expectStatus().isEqualTo(HttpStatus.CONFLICT)
                 .expectBody(ErrorResponse.class)
                 .value(err -> Objects.equals(err.reasons().size(), 1))
@@ -289,12 +289,12 @@ class UsersControllerTest extends PostgresqlContainer {
 
         //when
         //then
-        rest.post().uri("/api/users/register").bodyValue(addUserDTO1).exchange()
+        webTestClient.post().uri("/api/users/register").bodyValue(addUserDTO1).exchange()
                 .expectStatus().isCreated()
                 .expectBody(GetUserDTO.class)
                 .returnResult().getResponseBody();
 
-        rest.post().uri("/api/users/register").bodyValue(addUserDTO2).exchange()
+        webTestClient.post().uri("/api/users/register").bodyValue(addUserDTO2).exchange()
                 .expectStatus().isEqualTo(HttpStatus.CONFLICT)
                 .expectBody(ErrorResponse.class)
                 .value(err -> Objects.equals(err.reasons().size(), 1))
@@ -314,12 +314,12 @@ class UsersControllerTest extends PostgresqlContainer {
 
         //when
         //then
-        rest.post().uri("/api/users/register").bodyValue(addUserDTO1).exchange()
+        webTestClient.post().uri("/api/users/register").bodyValue(addUserDTO1).exchange()
                 .expectStatus().isCreated()
                 .expectBody(GetUserDTO.class)
                 .returnResult().getResponseBody();
 
-        rest.post().uri("/api/users/register").bodyValue(addUserDTO2).exchange()
+        webTestClient.post().uri("/api/users/register").bodyValue(addUserDTO2).exchange()
                 .expectStatus().isEqualTo(HttpStatus.CONFLICT)
                 .expectBody(ErrorResponse.class)
                 .value(err -> Objects.equals(err.reasons().size(), 1))
