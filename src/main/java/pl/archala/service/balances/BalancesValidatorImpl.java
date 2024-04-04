@@ -14,7 +14,7 @@ import static pl.archala.utils.ExceptionInfoProvider.TRANSACTIONS_LIMIT_EXCEEDED
 public class BalancesValidatorImpl implements BalancesValidator {
 
     @Override
-    public void validateBalanceToTransaction(Balance balance, BigDecimal value) throws InsufficientFundsException, TransactionsLimitException {
+    public void validateBalanceBeforeTransaction(Balance balance, BigDecimal value) throws InsufficientFundsException, TransactionsLimitException {
         validateMinimumBalanceContent(balance, value);
         validateDailyTransactionsLimit(balance);
     }

@@ -8,5 +8,5 @@ import java.math.BigDecimal;
 
 public interface BalancesValidator {
 
-    void validateBalanceToTransaction(Balance balance, BigDecimal value) throws InsufficientFundsException, TransactionsLimitException;
+    void validateBalanceBeforeTransaction(Balance balance, BigDecimal value) throws InsufficientFundsException, TransactionsLimitException;
 }

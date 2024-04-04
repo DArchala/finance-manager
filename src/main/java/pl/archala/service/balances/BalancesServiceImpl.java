@@ -15,6 +15,7 @@ import pl.archala.exception.UserException;
 import pl.archala.mapper.BalancesMapper;
 import pl.archala.repository.BalancesRepository;
 import pl.archala.repository.UsersRepository;
+import pl.archala.service.users.UsersValidator;
 
 import java.math.BigDecimal;
 
@@ -29,6 +30,7 @@ public class BalancesServiceImpl implements BalancesService {
     private final BalancesMapper balancesMapper;
     private final BalancesValidator balancesValidator;
     private final UsersRepository usersRepository;
+    private final UsersValidator usersValidator;
 
     @Override
     public GetBalanceDTO create(BalanceCode balanceCode, String username) throws UserAlreadyContainsBalanceException {
@@ -49,16 +51,10 @@ public class BalancesServiceImpl implements BalancesService {
 
     @Override
     public synchronized GetBalanceDTO makeTransaction(String sourceBalanceId, String targetBalanceId, BigDecimal value, String username) throws InsufficientFundsException, TransactionsLimitException, UserException {
-        User user = usersRepository.findUserByUsername(username).orElseThrow(() -> new EntityNotFoundException(USER_WITH_USERNAME_DOES_NOT_EXIST.formatted(username)));
-        if (user.getBalance() == null) {
-            throw new UserException(USER_DOES_NOT_HAVE_BALANCE.formatted(username));
-        }
-        if (!user.getBalance().getId().equals(sourceBalanceId)) {
-            throw new UserException(INVALID_SOURCE_BALANCE.formatted(sourceBalanceId));
-        }
+        usersValidator.validateUserBeforeTransaction(username, sourceBalanceId);
         Balance sourceBalance = balancesRepository.findById(sourceBalanceId).orElseThrow(() -> new EntityNotFoundException(BALANCE_WITH_ID_DOES_NOT_EXIST.formatted(sourceBalanceId)));
 
-        balancesValidator.validateBalanceToTransaction(sourceBalance, value);
+        balancesValidator.validateBalanceBeforeTransaction(sourceBalance, value);
         Balance targetBalance = balancesRepository.findById(targetBalanceId).orElseThrow(() -> new EntityNotFoundException(BALANCE_WITH_ID_DOES_NOT_EXIST.formatted(targetBalanceId)));
 
         sourceBalance.subtract(value);
