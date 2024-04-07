@@ -6,7 +6,7 @@ import pl.archala.dto.user.UserNotificationData;
 
 @Slf4j
 @Service("email")
-public class EmailSender implements NotificationSender {
+class EmailSender implements NotificationSender {
 
     @Override
     public void sendNotification(UserNotificationData userNotificationData, String content) {

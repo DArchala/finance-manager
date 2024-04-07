@@ -24,7 +24,7 @@ import static pl.archala.utils.ExceptionInfoProvider.*;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class BalancesServiceImpl implements BalancesService {
+class BalancesServiceImpl implements BalancesService {
 
     private final BalancesRepository balancesRepository;
     private final BalancesMapper balancesMapper;

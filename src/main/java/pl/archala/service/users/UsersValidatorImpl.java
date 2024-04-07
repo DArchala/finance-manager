@@ -16,7 +16,7 @@ import static pl.archala.utils.ExceptionInfoProvider.*;
 
 @Service
 @RequiredArgsConstructor
-public class UsersValidatorImpl implements UsersValidator {
+class UsersValidatorImpl implements UsersValidator {
 
     private final UsersRepository usersRepository;
 

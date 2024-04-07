@@ -2,6 +2,8 @@ package pl.archala.utils;
 
 public final class ExceptionInfoProvider {
 
+    private ExceptionInfoProvider() {}
+
     public static final String USER_ALREADY_CONTAINS_BALANCE = "User with name %s already contains balance, it is not possible to create next one.";
     public static final String USER_WITH_USERNAME_DOES_NOT_EXIST = "User with name %s does not exist";
     public static final String BALANCE_WITH_ID_DOES_NOT_EXIST = "Balance with id %s does not exist";

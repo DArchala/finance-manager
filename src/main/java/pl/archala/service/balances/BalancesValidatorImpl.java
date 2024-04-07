@@ -11,7 +11,7 @@ import static pl.archala.utils.ExceptionInfoProvider.INSUFFICIENT_FUNDS;
 import static pl.archala.utils.ExceptionInfoProvider.TRANSACTIONS_LIMIT_EXCEEDED;
 
 @Service
-public class BalancesValidatorImpl implements BalancesValidator {
+class BalancesValidatorImpl implements BalancesValidator {
 
     @Override
     public void validateBalanceBeforeTransaction(Balance balance, BigDecimal value) throws InsufficientFundsException, TransactionsLimitException {

@@ -18,7 +18,7 @@ import static pl.archala.utils.ExceptionInfoProvider.USER_WITH_USERNAME_DOES_NOT
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class UsersServiceImpl implements UsersService {
+class UsersServiceImpl implements UsersService {
 
     private final UsersRepository usersRepository;
     private final UsersValidator usersValidator;
