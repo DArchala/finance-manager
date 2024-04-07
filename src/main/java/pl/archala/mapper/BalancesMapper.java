@@ -1,14 +1,12 @@
 package pl.archala.mapper;
 
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
 import pl.archala.dto.balance.GetBalanceDTO;
 import pl.archala.entity.Balance;
 
-@Component
-public class BalancesMapper {
+@Mapper(componentModel = "spring")
+public interface BalancesMapper {
 
-    public GetBalanceDTO toGetDto(Balance balance) {
-        return new GetBalanceDTO(balance.getId(), balance.getValue(), balance.getDailyTransactionsCount());
-    }
+    GetBalanceDTO toGetDto(Balance balance);
 
 }

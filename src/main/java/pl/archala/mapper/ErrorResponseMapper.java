@@ -1,17 +1,16 @@
 package pl.archala.mapper;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import pl.archala.dto.errorResponse.ErrorResponse;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-@Component
-public class ErrorResponseMapper {
+@Mapper(componentModel = "spring")
+public interface ErrorResponseMapper {
 
-    public ErrorResponse toErrorResponse(List<String> reasons, HttpStatus status) {
-        return new ErrorResponse(LocalDateTime.now(), reasons, status);
-    }
+    @Mapping(target = "occurred", expression = "java(LocalDateTime.now())")
+    ErrorResponse toErrorResponse(List<String> reasons, HttpStatus status);
 
 }

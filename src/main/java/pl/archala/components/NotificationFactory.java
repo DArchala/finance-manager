@@ -21,7 +21,7 @@ public class NotificationFactory {
     }
 
     public void execute(UserNotificationData userNotificationData, BigDecimal value, String targetBalanceId, BigDecimal remainingFunds) throws UnsupportedNotificationTypeException {
-        NotificationSender notificationSender = getNotificationSender(userNotificationData.channel());
+        NotificationSender notificationSender = getNotificationSender(userNotificationData.notificationChannel());
         String content = NotificationSender.generateContent(value, targetBalanceId, remainingFunds);
         notificationSender.sendNotification(userNotificationData, content);
     }
