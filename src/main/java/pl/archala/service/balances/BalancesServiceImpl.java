@@ -4,6 +4,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pl.archala.dto.balance.BalanceTransactionDTO;
 import pl.archala.dto.balance.GetBalanceDTO;
 import pl.archala.entity.Balance;
 import pl.archala.entity.User;
@@ -16,8 +17,6 @@ import pl.archala.mapper.BalancesMapper;
 import pl.archala.repository.BalancesRepository;
 import pl.archala.repository.UsersRepository;
 import pl.archala.service.users.UsersValidator;
-
-import java.math.BigDecimal;
 
 import static pl.archala.utils.ExceptionInfoProvider.*;
 
@@ -50,15 +49,15 @@ class BalancesServiceImpl implements BalancesService {
     }
 
     @Override
-    public synchronized GetBalanceDTO makeTransaction(String sourceBalanceId, String targetBalanceId, BigDecimal value, String username) throws InsufficientFundsException, TransactionsLimitException, UserException {
-        usersValidator.validateUserBeforeTransaction(username, sourceBalanceId);
-        Balance sourceBalance = balancesRepository.findById(sourceBalanceId).orElseThrow(() -> new EntityNotFoundException(BALANCE_WITH_ID_DOES_NOT_EXIST.formatted(sourceBalanceId)));
+    public synchronized GetBalanceDTO makeTransaction(BalanceTransactionDTO transactionDTO, String username) throws InsufficientFundsException, TransactionsLimitException, UserException {
+        usersValidator.validateUserBeforeTransaction(username, transactionDTO.sourceBalanceId());
+        Balance sourceBalance = balancesRepository.findById(transactionDTO.sourceBalanceId()).orElseThrow(() -> new EntityNotFoundException(BALANCE_WITH_ID_DOES_NOT_EXIST.formatted(transactionDTO.sourceBalanceId())));
 
-        balancesValidator.validateBalanceBeforeTransaction(sourceBalance, value);
-        Balance targetBalance = balancesRepository.findById(targetBalanceId).orElseThrow(() -> new EntityNotFoundException(BALANCE_WITH_ID_DOES_NOT_EXIST.formatted(targetBalanceId)));
+        balancesValidator.validateBalanceBeforeTransaction(sourceBalance, transactionDTO.value());
+        Balance targetBalance = balancesRepository.findById(transactionDTO.targetBalanceId()).orElseThrow(() -> new EntityNotFoundException(BALANCE_WITH_ID_DOES_NOT_EXIST.formatted(transactionDTO.targetBalanceId())));
 
-        sourceBalance.subtract(value);
-        targetBalance.add(value);
+        sourceBalance.subtract(transactionDTO.value());
+        targetBalance.add(transactionDTO.value());
 
         sourceBalance.incrementTransactions();
 

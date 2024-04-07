@@ -1,23 +1,19 @@
 package pl.archala.controller;
 
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Digits;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pl.archala.components.NotificationFactory;
+import pl.archala.dto.balance.BalanceTransactionDTO;
 import pl.archala.dto.balance.GetBalanceDTO;
 import pl.archala.enums.BalanceCode;
 import pl.archala.exception.*;
 import pl.archala.service.balances.BalancesService;
 import pl.archala.service.users.UsersService;
 
-import java.math.BigDecimal;
 import java.security.Principal;
 
 @Validated
@@ -40,16 +36,12 @@ public class BalancesController {
     }
 
     @PostMapping("/transaction")
-    public GetBalanceDTO makeTransaction(@RequestParam String sourceBalanceId,
-                                         @RequestParam String targetBalanceId,
-                                         @RequestParam @DecimalMin(value = "0.0", inclusive = false,
-                                                 message = "Value to transact must be bigger than 0")
-                                         @Digits(integer = 10, fraction = 2, message = "Value must contains max 10 digits before comma and max 2 after.") BigDecimal value,
+    public GetBalanceDTO makeTransaction(@Valid @RequestBody BalanceTransactionDTO transactionDTO,
                                          Principal principal)
             throws InsufficientFundsException, TransactionsLimitException, UserException, UnsupportedNotificationTypeException {
-        var getBalanceDTO = balancesService.makeTransaction(sourceBalanceId, targetBalanceId, value, principal.getName());
+        var getBalanceDTO = balancesService.makeTransaction(transactionDTO, principal.getName());
         var userNotificationData = usersService.getUserNotificationData(principal.getName());
-        notificationFactory.execute(userNotificationData, value, targetBalanceId, getBalanceDTO.value());
+        notificationFactory.execute(userNotificationData, transactionDTO.value(), transactionDTO.targetBalanceId(), getBalanceDTO.value());
         return getBalanceDTO;
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import pl.archala.FinanceManagerApplicationTests;
 import pl.archala.PostgresqlContainer;
+import pl.archala.dto.balance.BalanceTransactionDTO;
 import pl.archala.dto.balance.GetBalanceDTO;
 import pl.archala.dto.errorResponse.ErrorResponse;
 import pl.archala.dto.user.AddUserDTO;
@@ -97,6 +98,7 @@ class BalancesControllerTest extends PostgresqlContainer {
         String username = "user111";
         String password = "passworD1@";
         AddUserDTO addUserDTO1 = new AddUserDTO(username, password, "111333555", "email1@wp.pl", NotificationChannel.SMS);
+        BalanceTransactionDTO transactionDTO = new BalanceTransactionDTO("1", "2", BigDecimal.valueOf(50));
         String expectedErrorMsg = USER_DOES_NOT_HAVE_BALANCE.formatted(username);
 
         //when
@@ -104,11 +106,7 @@ class BalancesControllerTest extends PostgresqlContainer {
                 .exchange()
                 .expectStatus().isCreated();
 
-        ErrorResponse errorResponse = webTestClient.post().uri(uriBuilder -> uriBuilder.path("/api/balances/transaction")
-                        .queryParam("sourceBalanceId", "1")
-                        .queryParam("targetBalanceId", "2")
-                        .queryParam("value", BigDecimal.valueOf(50))
-                        .build())
+        ErrorResponse errorResponse = webTestClient.post().uri("/api/balances/transaction").bodyValue(transactionDTO)
                 .headers(headers -> headers.setBasicAuth(username, password)).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
@@ -131,6 +129,7 @@ class BalancesControllerTest extends PostgresqlContainer {
         String username = "user111";
         String password = "passworD1@";
         AddUserDTO addUserDTO1 = new AddUserDTO(username, password, "111333555", "email1@wp.pl", NotificationChannel.SMS);
+        BalanceTransactionDTO transactionDTO = new BalanceTransactionDTO(notExistingBalanceId, notExistingBalanceId2, BigDecimal.valueOf(50));
         String expectedErrorMsg = INVALID_SOURCE_BALANCE.formatted(notExistingBalanceId);
 
         //when
@@ -143,11 +142,7 @@ class BalancesControllerTest extends PostgresqlContainer {
                 .headers(headers -> headers.setBasicAuth(username, password)).exchange()
                 .expectStatus().isCreated();
 
-        ErrorResponse errorResponse = webTestClient.post().uri(uriBuilder -> uriBuilder.path("/api/balances/transaction")
-                        .queryParam("sourceBalanceId", notExistingBalanceId)
-                        .queryParam("targetBalanceId", notExistingBalanceId2)
-                        .queryParam("value", BigDecimal.valueOf(50))
-                        .build())
+        ErrorResponse errorResponse = webTestClient.post().uri("/api/balances/transaction").bodyValue(transactionDTO)
                 .headers(headers -> headers.setBasicAuth(username, password)).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
@@ -169,7 +164,6 @@ class BalancesControllerTest extends PostgresqlContainer {
         String password = "passworD1@";
         AddUserDTO addUserDTO1 = new AddUserDTO(username, password, "111333555", "email1@wp.pl", NotificationChannel.SMS);
 
-        //when
         webTestClient.post().uri("/api/users/register").bodyValue(addUserDTO1)
                 .exchange()
                 .expectStatus().isCreated();
@@ -181,11 +175,10 @@ class BalancesControllerTest extends PostgresqlContainer {
                 .expectBody(GetBalanceDTO.class)
                 .returnResult().getResponseBody();
 
-        ErrorResponse errorResponse = webTestClient.post().uri(uriBuilder -> uriBuilder.path("/api/balances/transaction")
-                        .queryParam("sourceBalanceId", getBalanceDTO.id())
-                        .queryParam("targetBalanceId", "00000000000000000000")
-                        .queryParam("value", BigDecimal.valueOf(200))
-                        .build())
+        BalanceTransactionDTO transactionDTO = new BalanceTransactionDTO(getBalanceDTO.id(), "00000000000000000000", BigDecimal.valueOf(200));
+
+        //when
+        ErrorResponse errorResponse = webTestClient.post().uri("/api/balances/transaction").bodyValue(transactionDTO)
                 .headers(headers -> headers.setBasicAuth(username, password)).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
@@ -208,7 +201,6 @@ class BalancesControllerTest extends PostgresqlContainer {
         String password = "passworD1@";
         AddUserDTO addUserDTO1 = new AddUserDTO(username, password, "111333555", "email1@wp.pl", NotificationChannel.SMS);
 
-        //when
         webTestClient.post().uri("/api/users/register").bodyValue(addUserDTO1)
                 .exchange()
                 .expectStatus().isCreated();
@@ -220,11 +212,10 @@ class BalancesControllerTest extends PostgresqlContainer {
                 .expectBody(GetBalanceDTO.class)
                 .returnResult().getResponseBody();
 
-        ErrorResponse errorResponse = webTestClient.post().uri(uriBuilder -> uriBuilder.path("/api/balances/transaction")
-                        .queryParam("sourceBalanceId", getBalanceDTO.id())
-                        .queryParam("targetBalanceId", notExistingTargetBalanceId)
-                        .queryParam("value", BigDecimal.valueOf(50))
-                        .build())
+        BalanceTransactionDTO transactionDTO = new BalanceTransactionDTO(getBalanceDTO.id(), notExistingTargetBalanceId, BigDecimal.valueOf(50));
+
+        //when
+        ErrorResponse errorResponse = webTestClient.post().uri("/api/balances/transaction").bodyValue(transactionDTO)
                 .headers(headers -> headers.setBasicAuth(username, password)).exchange()
                 .expectStatus().isNotFound()
                 .expectBody(ErrorResponse.class)
@@ -248,7 +239,6 @@ class BalancesControllerTest extends PostgresqlContainer {
         AddUserDTO addUserDTO1 = new AddUserDTO(username1, password, "111333555", "email1@wp.pl", NotificationChannel.SMS);
         AddUserDTO addUserDTO2 = new AddUserDTO(username2, password, "222444666", "email2@wp.pl", NotificationChannel.EMAIL);
 
-        //when
         webTestClient.post().uri("/api/users/register").bodyValue(addUserDTO1)
                 .exchange()
                 .expectStatus().isCreated();
@@ -271,44 +261,28 @@ class BalancesControllerTest extends PostgresqlContainer {
                 .expectBody(GetBalanceDTO.class)
                 .returnResult().getResponseBody();
 
-        GetBalanceDTO getSourceBalanceDTOAfterOneTransaction = webTestClient.post().uri(uriBuilder -> uriBuilder.path("/api/balances/transaction")
-                        .queryParam("sourceBalanceId", userBalance1.id())
-                        .queryParam("targetBalanceId", userBalance2.id())
-                        .queryParam("value", BigDecimal.valueOf(10))
-                        .build())
+        BalanceTransactionDTO transactionDTO = new BalanceTransactionDTO(userBalance1.id(), userBalance2.id(), BigDecimal.valueOf(10));
+
+        //when
+        GetBalanceDTO getSourceBalanceDTOAfterOneTransaction = webTestClient.post().uri("/api/balances/transaction").bodyValue(transactionDTO)
                 .headers(headers -> headers.setBasicAuth(username1, password)).exchange()
                 .expectStatus().isOk()
                 .expectBody(GetBalanceDTO.class)
                 .returnResult().getResponseBody();
 
-        GetBalanceDTO getSourceBalanceDTOAfterTwoTransactions = webTestClient.post().uri(
-                        uriBuilder -> uriBuilder.path("/api/balances/transaction")
-                                .queryParam("sourceBalanceId", userBalance1.id())
-                                .queryParam("targetBalanceId", userBalance2.id())
-                                .queryParam("value", BigDecimal.valueOf(10))
-                                .build())
+        GetBalanceDTO getSourceBalanceDTOAfterTwoTransactions = webTestClient.post().uri("/api/balances/transaction").bodyValue(transactionDTO)
                 .headers(headers -> headers.setBasicAuth(username1, password)).exchange()
                 .expectStatus().isOk()
                 .expectBody(GetBalanceDTO.class)
                 .returnResult().getResponseBody();
 
-        GetBalanceDTO getSourceBalanceDTOAfterThreeTransactions = webTestClient.post().uri(
-                        uriBuilder -> uriBuilder.path("/api/balances/transaction")
-                                .queryParam("sourceBalanceId", userBalance1.id())
-                                .queryParam("targetBalanceId", userBalance2.id())
-                                .queryParam("value", BigDecimal.valueOf(10))
-                                .build())
+        GetBalanceDTO getSourceBalanceDTOAfterThreeTransactions = webTestClient.post().uri("/api/balances/transaction").bodyValue(transactionDTO)
                 .headers(headers -> headers.setBasicAuth(username1, password)).exchange()
                 .expectStatus().isOk()
                 .expectBody(GetBalanceDTO.class)
                 .returnResult().getResponseBody();
 
-        ErrorResponse errorResponse = webTestClient.post().uri(
-                        uriBuilder -> uriBuilder.path("/api/balances/transaction")
-                                .queryParam("sourceBalanceId", userBalance1.id())
-                                .queryParam("targetBalanceId", userBalance2.id())
-                                .queryParam("value", BigDecimal.valueOf(10))
-                                .build())
+        ErrorResponse errorResponse = webTestClient.post().uri("/api/balances/transaction").bodyValue(transactionDTO)
                 .headers(headers -> headers.setBasicAuth(username1, password)).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
@@ -347,8 +321,6 @@ class BalancesControllerTest extends PostgresqlContainer {
         String expectedZeroValueErrorMsg = "Value to transact must be bigger than 0";
         String invalidValueFormatErrorMsg = "Value must contains max 10 digits before comma and max 2 after.";
 
-
-        //when
         webTestClient.post().uri("/api/users/register").bodyValue(addUserDTO1)
                 .exchange()
                 .expectStatus().isCreated();
@@ -371,31 +343,24 @@ class BalancesControllerTest extends PostgresqlContainer {
                 .expectBody(GetBalanceDTO.class)
                 .returnResult().getResponseBody();
 
-        ErrorResponse zeroValueError = webTestClient.post().uri(uriBuilder -> uriBuilder.path("/api/balances/transaction")
-                        .queryParam("sourceBalanceId", userBalance1.id())
-                        .queryParam("targetBalanceId", userBalance2.id())
-                        .queryParam("value", BigDecimal.valueOf(0.0))
-                        .build())
+        BalanceTransactionDTO transactionDTO1 = new BalanceTransactionDTO(userBalance1.id(), userBalance2.id(), BigDecimal.valueOf(0.0));
+        BalanceTransactionDTO transactionDTO2 = new BalanceTransactionDTO(userBalance1.id(), userBalance2.id(), BigDecimal.valueOf(1.001));
+        BalanceTransactionDTO transactionDTO3 = new BalanceTransactionDTO(userBalance1.id(), userBalance2.id(), BigDecimal.valueOf(10000000000L));
+
+        //when
+        ErrorResponse zeroValueError = webTestClient.post().uri("/api/balances/transaction").bodyValue(transactionDTO1)
                 .headers(headers -> headers.setBasicAuth(username1, password)).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
                 .returnResult().getResponseBody();
 
-        ErrorResponse moreThanTwoDigitsAfterCommaError = webTestClient.post().uri(uriBuilder -> uriBuilder.path("/api/balances/transaction")
-                        .queryParam("sourceBalanceId", userBalance1.id())
-                        .queryParam("targetBalanceId", userBalance2.id())
-                        .queryParam("value", BigDecimal.valueOf(1.001))
-                        .build())
+        ErrorResponse moreThanTwoDigitsAfterCommaError = webTestClient.post().uri("/api/balances/transaction").bodyValue(transactionDTO2)
                 .headers(headers -> headers.setBasicAuth(username1, password)).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
                 .returnResult().getResponseBody();
 
-        ErrorResponse moreThanTenDigitsBeforeCommaError = webTestClient.post().uri(uriBuilder -> uriBuilder.path("/api/balances/transaction")
-                        .queryParam("sourceBalanceId", userBalance1.id())
-                        .queryParam("targetBalanceId", userBalance2.id())
-                        .queryParam("value", BigDecimal.valueOf(10000000000L))
-                        .build())
+        ErrorResponse moreThanTenDigitsBeforeCommaError = webTestClient.post().uri("/api/balances/transaction").bodyValue(transactionDTO3)
                 .headers(headers -> headers.setBasicAuth(username1, password)).exchange()
                 .expectStatus().isBadRequest()
                 .expectBody(ErrorResponse.class)
