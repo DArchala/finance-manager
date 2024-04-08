@@ -33,10 +33,10 @@ class BalancesServiceImpl implements BalancesService {
 
     @Override
     public GetBalanceDTO create(BalanceCode balanceCode, String username) throws UserAlreadyContainsBalanceException {
-        User user = usersRepository.findUserByUsername(username).orElseThrow(() -> new EntityNotFoundException(USER_WITH_USERNAME_DOES_NOT_EXIST.formatted(username)));
+        User user = usersRepository.findUserByUsername(username).orElseThrow(() -> new EntityNotFoundException(userWithUsernameDoesNotExist(username)));
 
         if (user.getBalance() != null) {
-            throw new UserAlreadyContainsBalanceException(USER_ALREADY_CONTAINS_BALANCE.formatted(user.getUsername()));
+            throw new UserAlreadyContainsBalanceException(userAlreadyContainsBalance(user.getUsername()));
         }
 
         Balance balance = new Balance();
@@ -51,10 +51,10 @@ class BalancesServiceImpl implements BalancesService {
     @Override
     public synchronized GetBalanceDTO makeTransaction(BalanceTransactionDTO transactionDTO, String username) throws InsufficientFundsException, TransactionsLimitException, UserException {
         usersValidator.validateUserBeforeTransaction(username, transactionDTO.sourceBalanceId());
-        Balance sourceBalance = balancesRepository.findById(transactionDTO.sourceBalanceId()).orElseThrow(() -> new EntityNotFoundException(BALANCE_WITH_ID_DOES_NOT_EXIST.formatted(transactionDTO.sourceBalanceId())));
+        Balance sourceBalance = balancesRepository.findById(transactionDTO.sourceBalanceId()).orElseThrow(() -> new EntityNotFoundException(balanceWithIdDoesNotExist(transactionDTO.sourceBalanceId())));
 
         balancesValidator.validateBalanceBeforeTransaction(sourceBalance, transactionDTO.value());
-        Balance targetBalance = balancesRepository.findById(transactionDTO.targetBalanceId()).orElseThrow(() -> new EntityNotFoundException(BALANCE_WITH_ID_DOES_NOT_EXIST.formatted(transactionDTO.targetBalanceId())));
+        Balance targetBalance = balancesRepository.findById(transactionDTO.targetBalanceId()).orElseThrow(() -> new EntityNotFoundException(balanceWithIdDoesNotExist(transactionDTO.targetBalanceId())));
 
         sourceBalance.subtract(transactionDTO.value());
         targetBalance.add(transactionDTO.value());

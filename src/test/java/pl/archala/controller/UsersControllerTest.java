@@ -259,7 +259,7 @@ class UsersControllerTest extends PostgresqlContainer {
         AddUserDTO addUserDTO1 = new AddUserDTO(username, "passworD1@", "123456789", "email321@gmail.com", channel);
         AddUserDTO addUserDTO2 = new AddUserDTO(username, "passworD1@", "987654321", "email123@wp.pl", channel);
 
-        String expectedUsernameTakenMsg = USERNAME_IS_ALREADY_TAKEN.formatted(username);
+        String expectedUsernameTakenMsg = usernameIsAlreadyTaken(username);
 
         //when
         //then
@@ -285,7 +285,7 @@ class UsersControllerTest extends PostgresqlContainer {
         AddUserDTO addUserDTO1 = new AddUserDTO("user123", password, "123456789", email, channel);
         AddUserDTO addUserDTO2 = new AddUserDTO("user321", password, "987654321", email, channel);
 
-        String expectedEmailTakenMsg = EMAIL_IS_ALREADY_TAKEN.formatted(email);
+        String expectedEmailTakenMsg = emailIsAlreadyTaken(email);
 
         //when
         //then
@@ -310,7 +310,7 @@ class UsersControllerTest extends PostgresqlContainer {
         AddUserDTO addUserDTO1 = new AddUserDTO("user123", password, phone, "email123@wp.pl", channel);
         AddUserDTO addUserDTO2 = new AddUserDTO("user321", password, phone, "email321@gmail.com", channel);
 
-        String expectedPhoneTakenMsg = PHONE_IS_ALREADY_TAKEN.formatted(phone);
+        String expectedPhoneTakenMsg = phoneIsAlreadyTaken(phone);
 
         //when
         //then

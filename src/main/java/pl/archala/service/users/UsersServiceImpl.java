@@ -13,7 +13,7 @@ import pl.archala.exception.UsersConflictException;
 import pl.archala.mapper.UsersMapper;
 import pl.archala.repository.UsersRepository;
 
-import static pl.archala.utils.ExceptionInfoProvider.USER_WITH_USERNAME_DOES_NOT_EXIST;
+import static pl.archala.utils.ExceptionInfoProvider.userWithUsernameDoesNotExist;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +37,7 @@ class UsersServiceImpl implements UsersService {
     @Override
     public UserNotificationData getUserNotificationData(String username) {
         return usersMapper.toUserNotificationDTO(usersRepository.findUserByUsername(username).orElseThrow(
-                () -> new EntityNotFoundException(USER_WITH_USERNAME_DOES_NOT_EXIST.formatted(username))
+                () -> new EntityNotFoundException(userWithUsernameDoesNotExist(username))
         ));
     }
 

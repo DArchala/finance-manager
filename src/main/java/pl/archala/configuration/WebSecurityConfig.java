@@ -14,7 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import pl.archala.repository.UsersRepository;
 
-import static pl.archala.utils.ExceptionInfoProvider.USER_WITH_USERNAME_DOES_NOT_EXIST;
+import static pl.archala.utils.ExceptionInfoProvider.userWithUsernameDoesNotExist;
 
 @Configuration
 @EnableWebSecurity
@@ -40,7 +40,7 @@ public class WebSecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> usersRepository.findUserByUsername(username).orElseThrow(() -> new EntityNotFoundException(USER_WITH_USERNAME_DOES_NOT_EXIST.formatted(username)));
+        return username -> usersRepository.findUserByUsername(username).orElseThrow(() -> new EntityNotFoundException(userWithUsernameDoesNotExist(username)));
     }
 
     @Bean

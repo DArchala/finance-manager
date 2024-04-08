@@ -22,19 +22,19 @@ class UsersValidatorImpl implements UsersValidator {
 
     @Override
     public void validateUsersConflicts(AddUserDTO addUserDTO) throws UsersConflictException {
-        findByOrThrowException(() -> usersRepository.findUserByUsername(addUserDTO.username()), USERNAME_IS_ALREADY_TAKEN.formatted(addUserDTO.username()));
-        findByOrThrowException(() -> usersRepository.findUserByEmail(addUserDTO.email()), EMAIL_IS_ALREADY_TAKEN.formatted(addUserDTO.email()));
-        findByOrThrowException(() -> usersRepository.findUserByPhone(addUserDTO.phone()), PHONE_IS_ALREADY_TAKEN.formatted(addUserDTO.phone()));
+        findByOrThrowException(() -> usersRepository.findUserByUsername(addUserDTO.username()), usernameIsAlreadyTaken(addUserDTO.username()));
+        findByOrThrowException(() -> usersRepository.findUserByEmail(addUserDTO.email()), emailIsAlreadyTaken(addUserDTO.email()));
+        findByOrThrowException(() -> usersRepository.findUserByPhone(addUserDTO.phone()), phoneIsAlreadyTaken(addUserDTO.phone()));
     }
 
     @Override
     public void validateUserBeforeTransaction(String username, String sourceBalanceId) throws UserException {
-        User user = usersRepository.findUserByUsername(username).orElseThrow(() -> new EntityNotFoundException(USER_WITH_USERNAME_DOES_NOT_EXIST.formatted(username)));
+        User user = usersRepository.findUserByUsername(username).orElseThrow(() -> new EntityNotFoundException(userWithUsernameDoesNotExist(username)));
         if (user.getBalance() == null) {
-            throw new UserException(USER_DOES_NOT_HAVE_BALANCE.formatted(username));
+            throw new UserException(userDoesNotHaveBalance(username));
         }
         if (!user.getBalance().getId().equals(sourceBalanceId)) {
-            throw new UserException(INVALID_SOURCE_BALANCE.formatted(sourceBalanceId));
+            throw new UserException(invalidSourceBalance(sourceBalanceId));
         }
     }
 

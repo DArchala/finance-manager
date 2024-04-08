@@ -64,7 +64,7 @@ class BalancesControllerTest extends PostgresqlContainer {
         String username = "user123";
         String password = "passworD1@";
         AddUserDTO addUserDTO = new AddUserDTO(username, password, "123456789", "email@wp.pl", NotificationChannel.SMS);
-        String expectedErrorMsg = USER_ALREADY_CONTAINS_BALANCE.formatted(username);
+        String expectedErrorMsg = userAlreadyContainsBalance(username);
 
         //when
         webTestClient.post().uri("/api/users/register").bodyValue(addUserDTO).exchange()
@@ -99,7 +99,7 @@ class BalancesControllerTest extends PostgresqlContainer {
         String password = "passworD1@";
         AddUserDTO addUserDTO1 = new AddUserDTO(username, password, "111333555", "email1@wp.pl", NotificationChannel.SMS);
         BalanceTransactionDTO transactionDTO = new BalanceTransactionDTO("1", "2", BigDecimal.valueOf(50));
-        String expectedErrorMsg = USER_DOES_NOT_HAVE_BALANCE.formatted(username);
+        String expectedErrorMsg = userDoesNotHaveBalance(username);
 
         //when
         webTestClient.post().uri("/api/users/register").bodyValue(addUserDTO1)
@@ -130,7 +130,7 @@ class BalancesControllerTest extends PostgresqlContainer {
         String password = "passworD1@";
         AddUserDTO addUserDTO1 = new AddUserDTO(username, password, "111333555", "email1@wp.pl", NotificationChannel.SMS);
         BalanceTransactionDTO transactionDTO = new BalanceTransactionDTO(notExistingBalanceId, notExistingBalanceId2, BigDecimal.valueOf(50));
-        String expectedErrorMsg = INVALID_SOURCE_BALANCE.formatted(notExistingBalanceId);
+        String expectedErrorMsg = invalidSourceBalance(notExistingBalanceId);
 
         //when
         webTestClient.post().uri("/api/users/register").bodyValue(addUserDTO1)
@@ -186,7 +186,7 @@ class BalancesControllerTest extends PostgresqlContainer {
 
         //then
         assertEquals(1, errorResponse.reasons().size());
-        assertEquals(INSUFFICIENT_FUNDS.formatted(getBalanceDTO.id()), errorResponse.reasons().getFirst());
+        assertEquals(insufficientFunds(getBalanceDTO.id()), errorResponse.reasons().getFirst());
         assertNotNull(errorResponse.occurred());
         assertEquals(HttpStatus.BAD_REQUEST, errorResponse.status());
 
@@ -223,7 +223,7 @@ class BalancesControllerTest extends PostgresqlContainer {
 
         //then
         assertEquals(1, errorResponse.reasons().size());
-        assertEquals(BALANCE_WITH_ID_DOES_NOT_EXIST.formatted(notExistingTargetBalanceId), errorResponse.reasons().getFirst());
+        assertEquals(balanceWithIdDoesNotExist(notExistingTargetBalanceId), errorResponse.reasons().getFirst());
         assertNotNull(errorResponse.occurred());
         assertEquals(HttpStatus.NOT_FOUND, errorResponse.status());
 
@@ -302,7 +302,7 @@ class BalancesControllerTest extends PostgresqlContainer {
         assertEquals(3, getSourceBalanceDTOAfterThreeTransactions.dailyTransactionsCount());
 
         assertEquals(1, errorResponse.reasons().size());
-        assertEquals(TRANSACTIONS_LIMIT_EXCEEDED.formatted(userBalance1.id()), errorResponse.reasons().getFirst());
+        assertEquals(transactionsLimitExceeded(userBalance1.id()), errorResponse.reasons().getFirst());
         assertNotNull(errorResponse.occurred());
         assertEquals(HttpStatus.BAD_REQUEST, errorResponse.status());
 

@@ -9,7 +9,7 @@ import pl.archala.service.senders.NotificationSender;
 import java.math.BigDecimal;
 import java.util.Map;
 
-import static pl.archala.utils.ExceptionInfoProvider.UNSUPPORTED_NOTIFICATION_TYPE;
+import static pl.archala.utils.ExceptionInfoProvider.unsupportedNotificationType;
 
 @Component
 public class NotificationFactory {
@@ -29,7 +29,7 @@ public class NotificationFactory {
     private NotificationSender getNotificationSender(NotificationChannel channel) throws UnsupportedNotificationTypeException {
         NotificationSender notificationSender = notificationSenderMap.get(channel.getValue());
         if (notificationSender == null) {
-            throw new UnsupportedNotificationTypeException(UNSUPPORTED_NOTIFICATION_TYPE.formatted(channel.getValue()));
+            throw new UnsupportedNotificationTypeException(unsupportedNotificationType(channel.getValue()));
         }
         return notificationSender;
     }

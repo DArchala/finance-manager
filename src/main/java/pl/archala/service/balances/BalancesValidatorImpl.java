@@ -7,8 +7,8 @@ import pl.archala.exception.TransactionsLimitException;
 
 import java.math.BigDecimal;
 
-import static pl.archala.utils.ExceptionInfoProvider.INSUFFICIENT_FUNDS;
-import static pl.archala.utils.ExceptionInfoProvider.TRANSACTIONS_LIMIT_EXCEEDED;
+import static pl.archala.utils.ExceptionInfoProvider.insufficientFunds;
+import static pl.archala.utils.ExceptionInfoProvider.transactionsLimitExceeded;
 
 @Service
 class BalancesValidatorImpl implements BalancesValidator {
@@ -21,13 +21,13 @@ class BalancesValidatorImpl implements BalancesValidator {
 
     private void validateMinimumBalanceContent(Balance balance, BigDecimal value) throws InsufficientFundsException {
         if (!balance.containsAtLeast(value)) {
-            throw new InsufficientFundsException(INSUFFICIENT_FUNDS.formatted(balance.getId()));
+            throw new InsufficientFundsException(insufficientFunds(balance.getId()));
         }
     }
 
     private void validateDailyTransactionsLimit(Balance balance) throws TransactionsLimitException {
         if (balance.getDailyTransactionsCount() >= 3) {
-            throw new TransactionsLimitException(TRANSACTIONS_LIMIT_EXCEEDED.formatted(balance.getId()));
+            throw new TransactionsLimitException(transactionsLimitExceeded(balance.getId()));
         }
     }
 
