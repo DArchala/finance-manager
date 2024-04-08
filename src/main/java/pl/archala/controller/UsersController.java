@@ -13,16 +13,19 @@ import pl.archala.service.users.UsersService;
 
 import java.util.Objects;
 
+import static pl.archala.utils.EndpointProvider.API_USERS;
+import static pl.archala.utils.EndpointProvider.REGISTER;
+
 @Validated
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping(API_USERS)
 @RequiredArgsConstructor
 @Slf4j
 public class UsersController {
 
     private final UsersService usersService;
 
-    @PostMapping("/register")
+    @PostMapping(REGISTER)
     public ResponseEntity<GetUserDTO> register(@Valid @RequestBody AddUserDTO addUserDTO) throws UsersConflictException {
         GetUserDTO getUserDTO = usersService.registerUser(addUserDTO);
         log.info("User {} has been registered", Objects.requireNonNull(getUserDTO).username());

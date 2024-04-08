@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import pl.archala.repository.UsersRepository;
 
+import static pl.archala.utils.EndpointProvider.API_USERS_REGISTER;
 import static pl.archala.utils.ExceptionInfoProvider.userWithUsernameDoesNotExist;
 
 @Configuration
@@ -28,7 +29,7 @@ public class WebSecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/api/users/register").permitAll()
+                        .requestMatchers(API_USERS_REGISTER).permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(AbstractHttpConfigurer::disable)

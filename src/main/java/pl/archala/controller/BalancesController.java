@@ -16,9 +16,12 @@ import pl.archala.service.users.UsersService;
 
 import java.security.Principal;
 
+import static pl.archala.utils.EndpointProvider.API_BALANCES;
+import static pl.archala.utils.EndpointProvider.TRANSACTION;
+
 @Validated
 @RestController
-@RequestMapping("/api/balances")
+@RequestMapping(API_BALANCES)
 @RequiredArgsConstructor
 @Slf4j
 public class BalancesController {
@@ -35,7 +38,7 @@ public class BalancesController {
         return ResponseEntity.status(201).body(getBalanceDTO);
     }
 
-    @PostMapping("/transaction")
+    @PostMapping(TRANSACTION)
     public GetBalanceDTO makeTransaction(@Valid @RequestBody BalanceTransactionDTO transactionDTO,
                                          Principal principal)
             throws InsufficientFundsException, TransactionsLimitException, UserException, UnsupportedNotificationTypeException {
