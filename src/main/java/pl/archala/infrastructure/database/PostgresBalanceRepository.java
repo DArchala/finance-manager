@@ -1,4 +1,4 @@
-package pl.archala.infrastructure.database.postgres;
+package pl.archala.infrastructure.database;
 
 import io.hypersistence.utils.spring.repository.BaseJpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

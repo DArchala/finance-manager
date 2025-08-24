@@ -9,8 +9,8 @@ import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.testcontainers.containers.PostgreSQLContainer
-import pl.archala.infrastructure.database.postgres.PostgresBalanceRepository
-import pl.archala.infrastructure.database.postgres.PostgresUserRepository
+import pl.archala.infrastructure.database.PostgresBalanceRepository
+import pl.archala.infrastructure.database.PostgresUserRepository
 import spock.lang.Specification
 
 @ActiveProfiles("test")

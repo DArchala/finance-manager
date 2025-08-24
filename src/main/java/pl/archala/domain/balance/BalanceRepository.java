@@ -3,7 +3,7 @@ package pl.archala.domain.balance;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import pl.archala.domain.exception.ApplicationException;
-import pl.archala.infrastructure.database.postgres.PostgresBalanceRepository;
+import pl.archala.infrastructure.database.PostgresBalanceRepository;
 
 @RequiredArgsConstructor
 @Repository
