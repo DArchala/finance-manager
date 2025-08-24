@@ -1,4 +1,4 @@
-package pl.archala.infrastructure.generator;
+package pl.archala.domain.balance;
 
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.IdentifierGenerator;

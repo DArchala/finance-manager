@@ -16,6 +16,7 @@ import java.util.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "users")
 @Entity
 public class User implements UserDetails {
 
@@ -108,9 +109,9 @@ public class User implements UserDetails {
     }
 
     public boolean hasBalanceWithId(String balanceId) {
-        return Optional.ofNullable(balance)
-                       .map(b -> b.getId()
-                                  .equals(balanceId))
+        return Optional.ofNullable(this.balance)
+                       .map(balance -> balance.getId()
+                                              .equals(balanceId))
                        .orElse(false);
     }
 

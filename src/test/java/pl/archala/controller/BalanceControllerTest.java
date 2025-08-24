@@ -6,7 +6,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import pl.archala.FinanceManagerApplicationTests;
 import pl.archala.PostgresqlContainer;
 import pl.archala.application.rest.error.ErrorResponse;
 import pl.archala.application.command.balance.create.CreateBalanceResult;
@@ -24,9 +23,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {FinanceManagerApplicationTests.class})
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class BalancesControllerTest extends PostgresqlContainer {
+class BalanceControllerTest extends PostgresqlContainer {
 
     @Autowired
     private WebTestClient webTestClient;
@@ -34,7 +33,7 @@ class BalancesControllerTest extends PostgresqlContainer {
     @Test
     void shouldCreateBalanceForUser() {
         //given
-        BalanceCode balanceCode = BalanceCode.KOD_5;
+        BalanceCode balanceCode = BalanceCode.CODE_5;
         String username = "user123";
         String password = "passworD1@";
         RestCreateUserRequest createUserCommand = new RestCreateUserRequest(username, password, "123456789", "email@wp.pl", NotificationChannel.SMS);
@@ -61,7 +60,7 @@ class BalancesControllerTest extends PostgresqlContainer {
     @Test
     void shouldThrowExceptionIfUserWantsToCreateSecondBalance() {
         //given
-        BalanceCode balanceCode = BalanceCode.KOD_5;
+        BalanceCode balanceCode = BalanceCode.CODE_5;
         String username = "user123";
         String password = "passworD1@";
         RestCreateUserRequest createUserCommand = new RestCreateUserRequest(username, password, "123456789", "email@wp.pl", NotificationChannel.SMS);
@@ -124,7 +123,7 @@ class BalancesControllerTest extends PostgresqlContainer {
     @Test
     void shouldThrowExceptionIfUserWantsToSendMoneyFromNotExistingBalance() {
         //given
-        BalanceCode code = BalanceCode.KOD_5;
+        BalanceCode code = BalanceCode.CODE_5;
         String notExistingBalanceId = "00000000000000000000";
         String notExistingBalanceId2 = "11111111111111111111";
         String username = "user111";
@@ -160,7 +159,7 @@ class BalancesControllerTest extends PostgresqlContainer {
     @Test
     void shouldThrowExceptionIfTargetBalanceDoesNotExist() {
         //given
-        BalanceCode code = BalanceCode.KOD_1;
+        BalanceCode code = BalanceCode.CODE_1;
         String notExistingTargetBalanceId = "00000000000000000000";
         String username = "user111";
         String password = "passworD1@";

@@ -3,7 +3,7 @@ package pl.archala.domain.notification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import pl.archala.domain.notification.dto.UserNotificationData;
-import pl.archala.infrastructure.exception.ApplicationException;
+import pl.archala.domain.exception.ApplicationException;
 
 import java.math.BigDecimal;
 import java.util.Map;

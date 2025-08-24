@@ -3,7 +3,7 @@ package pl.archala.application.command.balance.send_money;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import pl.archala.infrastructure.exception.ApplicationException;
+import pl.archala.domain.exception.ApplicationException;
 import pl.archala.application.command.user.notify.NotifyUserApplicationService;
 import pl.archala.application.command.user.notify.NotifyUserSendMoneyCommand;
 import pl.archala.shared.TransactionExecutor;

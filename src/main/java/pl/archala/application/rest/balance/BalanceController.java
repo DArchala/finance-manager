@@ -16,15 +16,15 @@ import java.security.Principal;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/balances")
-public class BalancesController {
+@RequestMapping("/api/balance")
+public class BalanceController {
 
     private final CreateBalanceApplicationService createBalanceApplicationService;
     private final SendMoneyApplicationService sendMoneyApplicationService;
 
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping
-    public CreateBalanceResult create(@RequestParam RestCreateBalanceRequest request, Principal principal) {
+    public CreateBalanceResult create(@RequestBody @Valid RestCreateBalanceRequest request, Principal principal) {
         var command = new CreateBalanceCommand(request.balanceCode(), principal.getName());
         var createUserBalanceResult = createBalanceApplicationService.createBalance(command);
         log.info("Balance with id {} has been created with amount {} for user {}",

@@ -1,4 +1,4 @@
-package pl.archala.infrastructure.exception;
+package pl.archala.domain.exception;
 
 import lombok.AccessLevel;
 import lombok.Getter;

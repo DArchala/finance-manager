@@ -6,9 +6,9 @@ import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.GenericGenerator;
 import pl.archala.domain.user.User;
-import pl.archala.infrastructure.generator.BalanceIdentifierGenerator;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -26,7 +26,7 @@ public class Balance {
 
     private BigDecimal value;
 
-    @OneToOne(mappedBy = "balance", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(mappedBy = "balance", cascade = {CascadeType.ALL})
     private User user;
 
     @Min(0)
