@@ -11,15 +11,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import pl.archala.infrastructure.exception.ApplicationException;
-import pl.archala.infrastructure.database.postgres.PostgresUserRepository;
+import pl.archala.domain.user.UserRepository;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
-    private final PostgresUserRepository postgresUserRepository;
+    private final UserRepository userRepository;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -40,8 +39,7 @@ public class WebSecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> postgresUserRepository.findUserByUsername(username)
-                                                 .orElseThrow(() -> ApplicationException.notFound(String.format("User with name %s does not exist", username)));
+        return userRepository::findUserByUsername;
     }
 
     @Bean

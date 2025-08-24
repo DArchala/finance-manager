@@ -19,8 +19,10 @@
         <test.containers.version>1.21.3</test.containers.version>
         <lombok.version>1.18.38</lombok.version>
         <postgresql.version>42.7.7</postgresql.version>
-        <mapstruct.version>1.6.3</mapstruct.version>
         <hypersistance.version>3.10.3</hypersistance.version>
+        <spock-core.version>2.4-M6-groovy-4.0</spock-core.version>
+        <groovy-all.version>4.0.28</groovy-all.version>
+        <gmavenplus-plugin.version>4.2.1</gmavenplus-plugin.version>
     </properties>
     <dependencies>
         <dependency>
@@ -39,12 +41,6 @@
             <version>${spring.boot.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <version>${spring.boot.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postgresql.version}</version>
@@ -54,6 +50,30 @@
             <artifactId>lombok</artifactId>
             <version>${lombok.version}</version>
             <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+            <version>${spring.boot.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.hypersistence</groupId>
+            <artifactId>hypersistence-utils-hibernate-63</artifactId>
+            <version>${hypersistance.version}</version>
+        </dependency>
+        <!--    TESTS    -->
+        <dependency>
+            <groupId>org.spockframework</groupId>
+            <artifactId>spock-core</artifactId>
+            <version>${spock-core.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>${groovy-all.version}</version>
+            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
@@ -75,18 +95,9 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
+            <artifactId>spring-boot-starter-test</artifactId>
             <version>${spring.boot.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>${mapstruct.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.hypersistence</groupId>
-            <artifactId>hypersistence-utils-hibernate-63</artifactId>
-            <version>${hypersistance.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

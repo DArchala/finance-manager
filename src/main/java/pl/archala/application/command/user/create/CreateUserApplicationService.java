@@ -3,7 +3,7 @@ package pl.archala.application.command.user.create;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import pl.archala.common.TransactionExecutor;
+import pl.archala.shared.TransactionExecutor;
 import pl.archala.domain.user.User;
 import pl.archala.domain.user.UserRepository;
 

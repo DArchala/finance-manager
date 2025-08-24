@@ -1,4 +1,4 @@
-package pl.archala.common;
+package pl.archala.shared;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Component;

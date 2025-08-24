@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import pl.archala.infrastructure.exception.ApplicationException;
-import pl.archala.common.TransactionExecutor;
+import pl.archala.shared.TransactionExecutor;
 import pl.archala.domain.balance.Balance;
 import pl.archala.domain.balance.BalanceRepository;
 import pl.archala.domain.user.UserRepository;

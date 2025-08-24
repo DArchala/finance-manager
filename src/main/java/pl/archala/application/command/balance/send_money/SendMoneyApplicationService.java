@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import pl.archala.infrastructure.exception.ApplicationException;
 import pl.archala.application.command.user.notify.NotifyUserApplicationService;
 import pl.archala.application.command.user.notify.NotifyUserSendMoneyCommand;
-import pl.archala.common.TransactionExecutor;
+import pl.archala.shared.TransactionExecutor;
 import pl.archala.domain.balance.BalanceRepository;
 import pl.archala.domain.user.UserRepository;
 

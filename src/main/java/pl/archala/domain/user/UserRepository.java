@@ -2,8 +2,8 @@ package pl.archala.domain.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import pl.archala.infrastructure.exception.ApplicationException;
 import pl.archala.infrastructure.database.postgres.PostgresUserRepository;
+import pl.archala.infrastructure.exception.ApplicationException;
 
 @RequiredArgsConstructor
 @Repository
