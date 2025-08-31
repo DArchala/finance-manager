@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.GenericGenerator;
 import pl.archala.domain.user.User;
 
@@ -24,7 +23,7 @@ public class Balance {
     @GenericGenerator(name = "balance-id", type = BalanceIdentifierGenerator.class)
     private String id;
 
-    private BigDecimal value;
+    private BigDecimal amount;
 
     @OneToOne(mappedBy = "balance", cascade = {CascadeType.ALL})
     private User user;
@@ -34,18 +33,18 @@ public class Balance {
     private volatile int dailyTransactionsCount = 0;
 
     public synchronized void subtract(BigDecimal value) {
-        this.value = this.value.subtract(value);
+        this.amount = this.amount.subtract(value);
     }
 
     public synchronized void add(BigDecimal value) {
         if (value.compareTo(BigDecimal.ZERO) < 0) {
             throw new ArithmeticException("It is unavailable to add negative amount to balance");
         }
-        this.value = this.value.add(value);
+        this.amount = this.amount.add(value);
     }
 
     public synchronized boolean containsAtLeast(BigDecimal value) {
-        return this.value.compareTo(value) >= 0;
+        return this.amount.compareTo(value) >= 0;
     }
 
     public synchronized void incrementTransactions() {
@@ -60,15 +59,19 @@ public class Balance {
         if (!(object instanceof Balance balance)) {
             return false;
         }
-        return dailyTransactionsCount == balance.dailyTransactionsCount && Objects.equals(id, balance.id) && Objects.equals(value, balance.value);
+        return dailyTransactionsCount == balance.dailyTransactionsCount && Objects.equals(id, balance.id) && Objects.equals(amount, balance.amount);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, value, dailyTransactionsCount);
+        return Objects.hash(id, amount, dailyTransactionsCount);
     }
 
     public static Balance create(BigDecimal value, User user) {
         return new Balance(null, value, user, 0);
+    }
+
+    public void updateUser(User user) {
+        this.user = user;
     }
 }

@@ -56,7 +56,7 @@ class BalanceTest {
         balance.add(value2);
 
         //then
-        assertEquals(sum, balance.getValue());
+        assertEquals(sum, balance.getAmount());
 
     }
 
@@ -70,7 +70,7 @@ class BalanceTest {
         //when
         balance1.add(value);
         balance2.add(value);
-        int compare = balance1.getValue().compareTo(balance2.getValue());
+        int compare = balance1.getAmount().compareTo(balance2.getAmount());
 
         //then
         assertEquals(0, compare);
@@ -88,7 +88,7 @@ class BalanceTest {
         balance.subtract(value);
 
         //then
-        assertEquals(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP), balance.getValue());
+        assertEquals(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP), balance.getAmount());
 
     }
 

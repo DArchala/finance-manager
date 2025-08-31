@@ -115,4 +115,8 @@ public class User implements UserDetails {
                        .orElse(false);
     }
 
+    public void updateBalance(Balance balance) {
+        this.balance = balance;
+    }
+
 }

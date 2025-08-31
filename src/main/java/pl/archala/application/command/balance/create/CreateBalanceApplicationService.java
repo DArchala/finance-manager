@@ -3,6 +3,7 @@ package pl.archala.application.command.balance.create;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import pl.archala.application.command.user.notify.NotifyUserApplicationService;
 import pl.archala.domain.exception.ApplicationException;
 import pl.archala.shared.TransactionExecutor;
 import pl.archala.domain.balance.Balance;
@@ -10,6 +11,8 @@ import pl.archala.domain.balance.BalanceRepository;
 import pl.archala.domain.user.UserRepository;
 
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,11 +29,15 @@ public class CreateBalanceApplicationService {
             throw ApplicationException.from("User with name: %s already contains balance.".formatted(command.username()), HttpStatus.UNPROCESSABLE_ENTITY);
         }
 
-        var balance = transactionExecutor.executeInTransactionAndReturn(() -> balanceRepository.persistNew(Balance.create(command.balanceCode()
-                                                                                                                                 .getValue(),
-                                                                                                                          user)));
+        var balance = transactionExecutor.executeInTransactionAndReturn(() -> {
+            var persistedBalance = balanceRepository.persistNew(Balance.create(command.balanceCode()
+                                                                                      .getValue(),
+                                                                               user));
+            user.updateBalance(persistedBalance);
+            return persistedBalance;
+        });
+
         return new CreateBalanceResult(balance.getId());
     }
-
 
 }

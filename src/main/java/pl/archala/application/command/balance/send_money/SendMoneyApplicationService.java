@@ -1,15 +1,18 @@
 package pl.archala.application.command.balance.send_money;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import pl.archala.domain.exception.ApplicationException;
 import pl.archala.application.command.user.notify.NotifyUserApplicationService;
-import pl.archala.application.command.user.notify.NotifyUserSendMoneyCommand;
-import pl.archala.shared.TransactionExecutor;
+import pl.archala.application.command.user.notify.NotifyUserSendMoneyByEmailCommand;
+import pl.archala.application.command.user.notify.NotifyUserSendMoneyByPhoneCommand;
 import pl.archala.domain.balance.BalanceRepository;
+import pl.archala.domain.exception.ApplicationException;
 import pl.archala.domain.user.UserRepository;
+import pl.archala.shared.TransactionExecutor;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class SendMoneyApplicationService {
@@ -46,7 +49,11 @@ public class SendMoneyApplicationService {
             sourceBalance.incrementTransactions();
         });
 
-        notifyUserApplicationService.notifyUserSendMoney(new NotifyUserSendMoneyCommand());
+        switch (user.getNotificationChannel()) {
+        case EMAIL -> notifyUserApplicationService.notifyUserSendMoney(new NotifyUserSendMoneyByEmailCommand(user.getEmail()));
+        case SMS -> notifyUserApplicationService.notifyUserSendMoney(new NotifyUserSendMoneyByPhoneCommand(user.getPhone()));
+        }
     }
+
 
 }

@@ -25,10 +25,10 @@ abstract class BaseE2ESpecification extends Specification {
     PasswordEncoder passwordEncoder
 
     @Autowired
-    PostgresBalanceRepository postgresBalanceRepository
+    PostgresBalanceRepository balanceRepository
 
     @Autowired
-    PostgresUserRepository postgresUserRepository
+    PostgresUserRepository userRepository
 
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("test")
