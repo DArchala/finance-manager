@@ -1,8 +1,6 @@
 package pl.archala.domain.balance;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +9,6 @@ import pl.archala.domain.user.User;
 
 import java.math.BigDecimal;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 @NoArgsConstructor

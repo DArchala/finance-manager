@@ -5,7 +5,6 @@ import pl.archala.domain.user.User;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 public interface PostgresUserRepository extends BaseJpaRepository<User, Long> {
 

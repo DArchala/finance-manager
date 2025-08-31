@@ -22,11 +22,11 @@ class BalanceFixture {
     }
 
     static String generateBalanceId() {
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder()
         for (int i = 0; i < 20; i++) {
-            sb.append(characters.get(random.nextInt(10)));
+            sb.append(characters.get(random.nextInt(10)))
         }
-        return sb.toString();
+        return sb.toString()
     }
 
 }

@@ -98,7 +98,7 @@ class BalanceControllerTest extends PostgresqlContainer {
         String username = "user111";
         String password = "passworD1@";
         RestCreateUserRequest restCreateUserRequest = new RestCreateUserRequest(username, password, "111333555", "email1@wp.pl", NotificationChannel.SMS);
-        RestSendMoneyRequest restSendMoneyRequest = new RestSendMoneyRequest("1", "2", BigDecimal.valueOf(50));
+        RestSendMoneyRequest restSendMoneyRequest = new RestSendMoneyRequest("2", BigDecimal.valueOf(50));
         String expectedErrorMsg = "User with name %s does not have balance.".formatted(username);
 
         //when
@@ -129,7 +129,7 @@ class BalanceControllerTest extends PostgresqlContainer {
         String username = "user111";
         String password = "passworD1@";
         CreateUserCommand createUserCommand1 = new CreateUserCommand(username, password, "111333555", "email1@wp.pl", NotificationChannel.SMS);
-        RestSendMoneyRequest transactionDTO = new RestSendMoneyRequest(notExistingBalanceId, notExistingBalanceId2, BigDecimal.valueOf(50));
+        RestSendMoneyRequest transactionDTO = new RestSendMoneyRequest(notExistingBalanceId2, BigDecimal.valueOf(50));
         String expectedErrorMsg = "Provided source balance with id %s does not match your balance.".formatted(notExistingBalanceId);
 
         //when
@@ -169,14 +169,13 @@ class BalanceControllerTest extends PostgresqlContainer {
                 .exchange()
                 .expectStatus().isCreated();
 
-        CreateBalanceResult createBalanceResult = webTestClient.post().uri(uriBuilder -> uriBuilder.path("/api/balances")
+        webTestClient.post().uri(uriBuilder -> uriBuilder.path("/api/balances")
                         .queryParam("code", code).build())
                 .headers(headers -> headers.setBasicAuth(username, password)).exchange()
                 .expectStatus().isCreated()
-                .expectBody(CreateBalanceResult.class)
-                .returnResult().getResponseBody();
+                .expectBody(CreateBalanceResult.class);
 
-        RestSendMoneyRequest transactionDTO = new RestSendMoneyRequest(createBalanceResult.balanceId(), notExistingTargetBalanceId, BigDecimal.valueOf(50));
+        RestSendMoneyRequest transactionDTO = new RestSendMoneyRequest(notExistingTargetBalanceId, BigDecimal.valueOf(50));
 
         //when
         ErrorResponse errorResponse = webTestClient.post().uri("/api/users/register").bodyValue(transactionDTO)

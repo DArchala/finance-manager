@@ -3,7 +3,6 @@ package pl.archala.application.command.balance.create;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import pl.archala.application.command.user.notify.NotifyUserApplicationService;
 import pl.archala.domain.exception.ApplicationException;
 import pl.archala.shared.TransactionExecutor;
 import pl.archala.domain.balance.Balance;
@@ -11,8 +10,6 @@ import pl.archala.domain.balance.BalanceRepository;
 import pl.archala.domain.user.UserRepository;
 
 import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Service
 @RequiredArgsConstructor

@@ -10,7 +10,6 @@ import pl.archala.application.command.user.notify.NotifyUserSendMoneyByPhoneComm
 import pl.archala.domain.balance.Balance;
 import pl.archala.domain.balance.BalanceRepository;
 import pl.archala.domain.exception.ApplicationException;
-import pl.archala.domain.user.User;
 import pl.archala.domain.user.UserRepository;
 import pl.archala.shared.TransactionExecutor;
 
