@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum NotificationChannel {
-    SMS("sms"), EMAIL("email");
+    SMS("sms"),
+    EMAIL("email");
 
     private final String value;
-
 }

@@ -7,10 +7,14 @@ import org.springframework.stereotype.Service;
 import pl.archala.application.command.user.notify.NotifyUserApplicationService;
 import pl.archala.application.command.user.notify.NotifyUserSendMoneyByEmailCommand;
 import pl.archala.application.command.user.notify.NotifyUserSendMoneyByPhoneCommand;
+import pl.archala.domain.balance.Balance;
 import pl.archala.domain.balance.BalanceRepository;
 import pl.archala.domain.exception.ApplicationException;
+import pl.archala.domain.user.User;
 import pl.archala.domain.user.UserRepository;
 import pl.archala.shared.TransactionExecutor;
+
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,23 +27,12 @@ public class SendMoneyApplicationService {
     private final TransactionExecutor transactionExecutor;
 
     public void sendMoney(SendMoneyCommand command) {
-        var user = userRepository.findUserByUsername(command.username());
+        var userContractor = userRepository.findUserByUsername(command.username());
+        var sourceBalance = Optional.ofNullable(userContractor.getBalance())
+                                    .orElseThrow(() -> ApplicationException.notFound("User with username: %s, does not have balance".formatted(command.username())));
 
-        if (!user.hasBalanceWithId(command.sourceBalanceId())) {
-            throw ApplicationException.from("Provided source balance with id: %s does not belong to: %s.".formatted(command.sourceBalanceId(), command.username()),
-                                            HttpStatus.UNPROCESSABLE_ENTITY);
-        }
-
-        var sourceBalance = balanceRepository.findById(command.sourceBalanceId());
-
-        if (!sourceBalance.containsAtLeast(command.value())) {
-            throw ApplicationException.from("Balance with id %s does not contain money amount to send amount: %s".formatted(sourceBalance.getId(), command.value()),
-                                            HttpStatus.UNPROCESSABLE_ENTITY);
-        }
-
-        if (sourceBalance.getDailyTransactionsCount() >= 3) {
-            throw ApplicationException.from("Balance with id %s exceeded the daily transaction limit".formatted(sourceBalance.getId()), HttpStatus.UNPROCESSABLE_ENTITY);
-        }
+        validateSourceBalanceAmount(sourceBalance, command);
+        validateSourceBalanceLimit(sourceBalance);
 
         var targetBalance = balanceRepository.findById(command.targetBalanceId());
 
@@ -49,11 +42,24 @@ public class SendMoneyApplicationService {
             sourceBalance.incrementTransactions();
         });
 
-        switch (user.getNotificationChannel()) {
-        case EMAIL -> notifyUserApplicationService.notifyUserSendMoney(new NotifyUserSendMoneyByEmailCommand(user.getEmail()));
-        case SMS -> notifyUserApplicationService.notifyUserSendMoney(new NotifyUserSendMoneyByPhoneCommand(user.getPhone()));
+        switch (userContractor.getNotificationChannel()) {
+        case EMAIL -> notifyUserApplicationService.notifyUserSendMoney(new NotifyUserSendMoneyByEmailCommand(userContractor.getEmail()));
+        case SMS -> notifyUserApplicationService.notifyUserSendMoney(new NotifyUserSendMoneyByPhoneCommand(userContractor.getPhone()));
         }
     }
 
+    private void validateSourceBalanceLimit(Balance sourceBalance) {
+        if (sourceBalance.getDailyTransactionsCount() >= 3) {
+            throw ApplicationException.from("Balance with id %s exceeded the daily transaction limit".formatted(sourceBalance.getId()), HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+    }
+
+
+    private void validateSourceBalanceAmount(Balance sourceBalance, SendMoneyCommand command) {
+        if (!sourceBalance.containsAtLeast(command.value())) {
+            throw ApplicationException.from("Balance with id %s does not contain money amount to send amount: %s".formatted(sourceBalance.getId(), command.value()),
+                                            HttpStatus.UNPROCESSABLE_ENTITY);
+        }
+    }
 
 }

@@ -39,13 +39,12 @@ public class BalanceController {
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     @PostMapping("/transaction")
     public void sendMoney(@Valid @RequestBody RestSendMoneyRequest request, Principal principal) {
-        var command = new SendMoneyCommand(request.sourceBalanceId(),
+        var command = new SendMoneyCommand(principal.getName(),
                                            request.targetBalanceId(),
-                                           request.amount(),
-                                           principal.getName());
+                                           request.amount());
         sendMoneyApplicationService.sendMoney(command);
-        log.info("Money has been sent from balance with id {} to balance with id {} with amount: {}",
-                 request.sourceBalanceId(),
+        log.info("Money has been sent from balance belong to user: {} to balance with id: {} with amount: {}",
+                 principal.getName(),
                  request.targetBalanceId(),
                  request.amount());
     }

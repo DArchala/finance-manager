@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -42,6 +44,7 @@ public class User implements UserDetails {
 
     @Nullable
     @OneToOne(cascade = CascadeType.ALL)
+    @Fetch(FetchMode.JOIN)
     @JoinColumn(name = "balance_id")
     private Balance balance;
 

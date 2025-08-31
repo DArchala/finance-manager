@@ -11,6 +11,7 @@ import pl.archala.domain.user.User;
 
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 @NoArgsConstructor
@@ -25,41 +26,37 @@ public class Balance {
 
     private BigDecimal amount;
 
-    @OneToOne(mappedBy = "balance", cascade = {CascadeType.ALL})
+    @OneToOne(mappedBy = "balance")
     private User user;
 
-    @Min(0)
-    @Max(3)
-    private volatile int dailyTransactionsCount = 0;
+    private int dailyTransactionsCount = 0;
 
-    public synchronized void subtract(BigDecimal value) {
-        this.amount = this.amount.subtract(value);
+    public void subtract(BigDecimal amount) {
+        this.amount = this.amount.subtract(amount);
     }
 
-    public synchronized void add(BigDecimal value) {
-        if (value.compareTo(BigDecimal.ZERO) < 0) {
+    public void add(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
             throw new ArithmeticException("It is unavailable to add negative amount to balance");
         }
-        this.amount = this.amount.add(value);
+        this.amount = this.amount.add(amount);
     }
 
-    public synchronized boolean containsAtLeast(BigDecimal value) {
-        return this.amount.compareTo(value) >= 0;
+    public boolean containsAtLeast(BigDecimal amount) {
+        return this.amount.compareTo(amount) >= 0;
     }
 
-    public synchronized void incrementTransactions() {
+    public void incrementTransactions() {
         dailyTransactionsCount++;
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (this == object) {
-            return true;
-        }
-        if (!(object instanceof Balance balance)) {
+    public boolean equals(Object o) {
+        if (!(o instanceof Balance balance)) {
             return false;
         }
-        return dailyTransactionsCount == balance.dailyTransactionsCount && Objects.equals(id, balance.id) && Objects.equals(amount, balance.amount);
+        return dailyTransactionsCount == balance.dailyTransactionsCount && Objects.equals(id, balance.id) && Objects.equals(amount, balance.amount) &&
+               Objects.equals(user, balance.user);
     }
 
     @Override
