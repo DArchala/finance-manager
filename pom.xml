@@ -24,6 +24,7 @@
         <groovy-all.version>4.0.28</groovy-all.version>
         <gmavenplus-plugin.version>3.14.0</gmavenplus-plugin.version>
         <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
+        <archunit.version>1.4.1</archunit.version>
     </properties>
     <dependencies>
         <dependency>
@@ -104,6 +105,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <version>${spring.boot.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit</artifactId>
+            <version>${archunit.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

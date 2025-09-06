@@ -1,10 +1,10 @@
 package pl.archala.domain.balance;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 import pl.archala.domain.user.User;
 
 import java.math.BigDecimal;
@@ -17,16 +17,25 @@ import java.util.Objects;
 public class Balance {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "balance-id")
-    @GenericGenerator(name = "balance-id", type = BalanceIdentifierGenerator.class)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
+    @NotNull
+    private String generatedId;
+
+    @NotNull
     private BigDecimal amount;
 
+    @NotNull
     @OneToOne(mappedBy = "balance")
     private User user;
 
+    @NotNull
     private int dailyTransactionsCount = 0;
+
+    @NotNull
+    @Version
+    private Long version;
 
     public void subtract(BigDecimal amount) {
         this.amount = this.amount.subtract(amount);
@@ -61,8 +70,8 @@ public class Balance {
         return Objects.hash(id, amount, dailyTransactionsCount);
     }
 
-    public static Balance create(BigDecimal value, User user) {
-        return new Balance(null, value, user, 0);
+    public static Balance create(BalanceGeneratedIdentifier identifier, BigDecimal value, User user) {
+        return new Balance(null, identifier.id(), value, user, 0, 0L);
     }
 
     public void updateUser(User user) {

@@ -1,29 +1,23 @@
 package pl.archala.application.command.balance.send_money;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import pl.archala.application.command.user.notify.NotifyUserApplicationService;
+import pl.archala.application.api.error.ApplicationException;
+import pl.archala.application.api.error.ErrorCode;
+import pl.archala.application.command.user.notify.NotifyUserApplicationInterface;
 import pl.archala.application.command.user.notify.NotifyUserSendMoneyByEmailCommand;
 import pl.archala.application.command.user.notify.NotifyUserSendMoneyByPhoneCommand;
 import pl.archala.domain.balance.Balance;
-import pl.archala.domain.balance.BalanceRepository;
-import pl.archala.domain.exception.ApplicationException;
-import pl.archala.domain.user.UserRepository;
+import pl.archala.domain.balance.BalanceRepositoryInterface;
+import pl.archala.domain.user.UserRepositoryInterface;
 import pl.archala.shared.TransactionExecutor;
 
 import java.util.Optional;
 
 @Slf4j
-@RequiredArgsConstructor
-@Service
-public class SendMoneyApplicationService {
-
-    private final UserRepository userRepository;
-    private final BalanceRepository balanceRepository;
-    private final NotifyUserApplicationService notifyUserApplicationService;
-    private final TransactionExecutor transactionExecutor;
+public record SendMoneyApplicationService(UserRepositoryInterface userRepository,
+                                          BalanceRepositoryInterface balanceRepository,
+                                          NotifyUserApplicationInterface notifyUserApplicationInterface,
+                                          TransactionExecutor transactionExecutor) {
 
     public void sendMoney(SendMoneyCommand command) {
         var userContractor = userRepository.findUserByUsername(command.username());
@@ -42,22 +36,21 @@ public class SendMoneyApplicationService {
         });
 
         switch (userContractor.getNotificationChannel()) {
-        case EMAIL -> notifyUserApplicationService.notifyUserSendMoney(new NotifyUserSendMoneyByEmailCommand(userContractor.getEmail()));
-        case SMS -> notifyUserApplicationService.notifyUserSendMoney(new NotifyUserSendMoneyByPhoneCommand(userContractor.getPhone()));
+        case EMAIL -> notifyUserApplicationInterface.notifyUserSendMoney(new NotifyUserSendMoneyByEmailCommand(userContractor.getEmail()));
+        case SMS -> notifyUserApplicationInterface.notifyUserSendMoney(new NotifyUserSendMoneyByPhoneCommand(userContractor.getPhone()));
         }
     }
 
     private void validateSourceBalanceLimit(Balance sourceBalance) {
         if (sourceBalance.getDailyTransactionsCount() >= 3) {
-            throw ApplicationException.from("Balance with id %s exceeded the daily transaction limit".formatted(sourceBalance.getId()), HttpStatus.UNPROCESSABLE_ENTITY);
+            throw ApplicationException.from("Balance with id %s exceeded the daily transaction limit".formatted(sourceBalance.getId()), ErrorCode.UNPROCESSABLE_ENTITY);
         }
     }
-
 
     private void validateSourceBalanceAmount(Balance sourceBalance, SendMoneyCommand command) {
         if (!sourceBalance.containsAtLeast(command.value())) {
             throw ApplicationException.from("Balance with id %s does not contain money amount to send amount: %s".formatted(sourceBalance.getId(), command.value()),
-                                            HttpStatus.UNPROCESSABLE_ENTITY);
+                                            ErrorCode.UNPROCESSABLE_ENTITY);
         }
     }
 

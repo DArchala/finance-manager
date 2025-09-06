@@ -1,0 +1,46 @@
+package pl.archala.infrastructure.adapter.in.rest;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import pl.archala.application.api.user.RestCreateUserRequest;
+import pl.archala.application.command.user.create.CreateUserApplicationService;
+import pl.archala.application.command.user.create.CreateUserCommand;
+import pl.archala.application.command.user.create.CreateUserResult;
+import pl.archala.application.query.find_user_balance_details.FindUserBalanceDetails;
+import pl.archala.application.query.find_user_balance_details.FindUserBalanceDetailsQuery;
+import pl.archala.application.query.find_user_balance_details.FindUserBalanceDetailsView;
+
+import java.security.Principal;
+
+@Slf4j
+@RequiredArgsConstructor
+@RequestMapping("/api/users")
+@RestController
+public class UsersController {
+
+    private final CreateUserApplicationService createUserApplicationService;
+    private final FindUserBalanceDetails findUserBalanceDetails;
+
+    @ResponseStatus(value = HttpStatus.CREATED)
+    @PostMapping("/register")
+    public CreateUserResult create(@RequestBody @Valid RestCreateUserRequest request) {
+        var command = new CreateUserCommand(request.username(),
+                                            request.password(),
+                                            request.phone(),
+                                            request.email(),
+                                            request.notificationChannel());
+        var createUserResult = createUserApplicationService.createUser(command);
+        log.info("User {} has been registered", command.username());
+        return createUserResult;
+    }
+
+    @GetMapping("/balance-details")
+    public FindUserBalanceDetailsView getUserWithBalanceDetails(Principal principal) {
+        var filter = new FindUserBalanceDetailsQuery(principal.getName());
+        return findUserBalanceDetails.findUserBalanceDetails(filter);
+    }
+
+}

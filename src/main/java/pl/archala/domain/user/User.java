@@ -5,22 +5,21 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import lombok.ToString;
 import pl.archala.domain.balance.Balance;
 import pl.archala.domain.notification.NotificationChannel;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.UUID;
 
+@ToString
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "users")
 @Entity
-public class User implements UserDetails {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,63 +41,17 @@ public class User implements UserDetails {
     @Enumerated(value = EnumType.STRING)
     private NotificationChannel notificationChannel;
 
+    @ToString.Exclude
     @Nullable
     @OneToOne(cascade = CascadeType.ALL)
-    @Fetch(FetchMode.JOIN)
     @JoinColumn(name = "balance_id")
     private Balance balance;
 
     @Column(nullable = false, unique = true)
     private UUID externalUuid;
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("user"));
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
-    @Override
-    public String getPassword() {
-        return new String(password);
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) {
-            return true;
-        }
-        if (!(object instanceof User user)) {
-            return false;
-        }
-        return Objects.equals(id, user.id) && Objects.equals(username, user.username) && Arrays.equals(password, user.password) && Objects.equals(phone, user.phone) &&
-               Objects.equals(email, user.email) && notificationChannel == user.notificationChannel;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = Objects.hash(id, username, phone, email, notificationChannel);
-        result = 31 * result + Arrays.hashCode(password);
-        return result;
-    }
+    @Version
+    private Long version;
 
     public static User create(String username, char[] password, String phone, String email, NotificationChannel notificationChannel) {
         return new User(null,
@@ -108,18 +61,26 @@ public class User implements UserDetails {
                         email,
                         notificationChannel,
                         null,
-                        UUID.randomUUID());
-    }
-
-    public boolean hasBalanceWithId(String balanceId) {
-        return Optional.ofNullable(this.balance)
-                       .map(balance -> balance.getId()
-                                              .equals(balanceId))
-                       .orElse(false);
+                        UUID.randomUUID(),
+                        0L);
     }
 
     public void updateBalance(Balance balance) {
         this.balance = balance;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof User user)) {
+            return false;
+        }
+        return Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.deepEquals(password, user.password) &&
+               Objects.equals(phone, user.phone) && Objects.equals(email, user.email) && notificationChannel == user.notificationChannel &&
+               Objects.equals(balance, user.balance) && Objects.equals(externalUuid, user.externalUuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, Arrays.hashCode(password), phone, email, notificationChannel, balance, externalUuid);
+    }
 }
