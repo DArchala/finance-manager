@@ -30,7 +30,7 @@ public record PostgresBalanceRepository(JpaBalanceRepository jpaBalanceRepositor
 
     @Override
     public FindUserBalanceDetailsView findUserBalanceDetails(FindUserBalanceDetailsQuery query) {
-        var balance = jpaBalanceRepository.findBalanceByUserUsername(query.username())
+        var balance = jpaBalanceRepository.findByUserName(query.username())
                                           .orElseThrow(() -> ApplicationException.notFound("Cannot find balance for user: %s".formatted(query.username())));
 
         return new FindUserBalanceDetailsView(balance.getId(),

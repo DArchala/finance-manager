@@ -1,7 +1,6 @@
 package pl.archala.domain.balance;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,21 +19,20 @@ public class Balance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
+    @Column(nullable = false, unique = true)
     private String generatedId;
 
-    @NotNull
+    @Column(nullable = false)
     private BigDecimal amount;
 
-    @NotNull
     @OneToOne(mappedBy = "balance")
     private User user;
 
-    @NotNull
+    @Column(nullable = false)
     private int dailyTransactionsCount = 0;
 
-    @NotNull
     @Version
+    @Column(nullable = false)
     private Long version;
 
     public void subtract(BigDecimal amount) {

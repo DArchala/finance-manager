@@ -21,7 +21,7 @@ class BalanceControllerTest extends BaseE2ESpecification {
         when:
         def createBalanceResult = webTestClient.post().uri("/api/balance")
                                 .bodyValue(request)
-                                .headers(headers -> headers.setBasicAuth(currentUser.getUsername(), "password"))
+                                .headers(headers -> headers.setBasicAuth(currentUser.getName(), "password"))
                                 .exchange()
                                 .expectStatus().isCreated()
                                 .expectBody(CreateBalanceResult.class)
@@ -48,7 +48,7 @@ class BalanceControllerTest extends BaseE2ESpecification {
     def 'Should throw exception if user already has balance'() {
         given:
         def currentUser = userRepository.persistAndFlush(UserFixture.custom(passwordEncoder))
-        def currentBalance = balanceRepository.persistAndFlush(BalanceFixture.custom())
+        def currentBalance = balanceRepository.persistAndFlush(BalanceFixture.custom(balanceIdentifierGenerator))
 
         currentBalance.updateUser(currentUser)
         currentUser.updateBalance(currentBalance)
@@ -60,7 +60,7 @@ class BalanceControllerTest extends BaseE2ESpecification {
         when:
         def createBalanceResult = webTestClient.post().uri("/api/balance")
                                 .bodyValue(request)
-                                .headers(headers -> headers.setBasicAuth(currentUser.getUsername(), "password"))
+                                .headers(headers -> headers.setBasicAuth(currentUser.getName(), "password"))
                                 .exchange()
                                 .expectStatus().isCreated()
                                 .expectBody(CreateBalanceResult.class)
@@ -82,6 +82,11 @@ class BalanceControllerTest extends BaseE2ESpecification {
 
         def user = users.first() as User
         user.getBalance().getId() == balance.getId()
+    }
+
+    def cleanup() {
+        balanceRepository.deleteAll()
+        userRepository.deleteAll()
     }
 
 }

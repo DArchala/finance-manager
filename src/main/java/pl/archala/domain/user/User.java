@@ -1,6 +1,5 @@
 package pl.archala.domain.user;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,7 +25,7 @@ public class User {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String username;
+    private String name;
 
     @Column(nullable = false)
     private char[] password;
@@ -42,7 +41,6 @@ public class User {
     private NotificationChannel notificationChannel;
 
     @ToString.Exclude
-    @Nullable
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "balance_id")
     private Balance balance;
@@ -50,6 +48,7 @@ public class User {
     @Column(nullable = false, unique = true)
     private UUID externalUuid;
 
+    @Column(nullable = false)
     @Version
     private Long version;
 
@@ -74,13 +73,13 @@ public class User {
         if (!(o instanceof User user)) {
             return false;
         }
-        return Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.deepEquals(password, user.password) &&
+        return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.deepEquals(password, user.password) &&
                Objects.equals(phone, user.phone) && Objects.equals(email, user.email) && notificationChannel == user.notificationChannel &&
                Objects.equals(balance, user.balance) && Objects.equals(externalUuid, user.externalUuid);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, Arrays.hashCode(password), phone, email, notificationChannel, balance, externalUuid);
+        return Objects.hash(id, name, Arrays.hashCode(password), phone, email, notificationChannel, balance, externalUuid);
     }
 }

@@ -103,7 +103,7 @@ class BeanConfiguration {
 
     @Bean
     UserDetailsService userDetailsService(JpaUserRepository userRepository) {
-        return username -> userRepository.findUserByUsername(username)
+        return username -> userRepository.findByName(username)
                                          .map(SecurityUserDetails::new)
                                          .orElseThrow(() -> ApplicationException.notFound("User with username: %s, not found".formatted(username)));
     }

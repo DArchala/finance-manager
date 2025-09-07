@@ -17,16 +17,16 @@ public record PostgresUserRepository(JpaUserRepository jpaUserRepository) implem
 
     @Override
     public User findUserByUsername(String username) {
-        return jpaUserRepository.findUserByUsername(username)
+        return jpaUserRepository.findByName(username)
                                 .orElseThrow(() -> ApplicationException.notFound("User with username: %s, not found".formatted(username)));
     }
 
     @Override
     public FindUserDetailsView findUserDetails(FindUserDetailsQuery filter) {
-        var user = jpaUserRepository.findUserByUsername(filter.username())
+        var user = jpaUserRepository.findByName(filter.username())
                                     .orElseThrow(() -> ApplicationException.notFound("User with username: %s, not found".formatted(filter.username())));
 
-        return new FindUserDetailsView(user.getUsername(),
+        return new FindUserDetailsView(user.getName(),
                                        user.getPhone(),
                                        user.getEmail());
     }
