@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import pl.archala.application.api.error.ErrorCode;
 import pl.archala.application.api.error.ErrorResponse;
 
 import java.util.List;
@@ -28,16 +29,15 @@ class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler 
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         var reasons = ex.getBindingResult().getAllErrors().stream().map(ObjectError::getDefaultMessage).toList();
         var httpStatusCode = HttpStatus.BAD_REQUEST;
-        var errorResponse = ErrorResponse.of(reasons, httpStatusCode.name());
-        return new ResponseEntity<>(errorResponse, httpStatusCode);
+        var errorResponse = ErrorResponse.of(reasons, ErrorCode.BAD_REQUEST);
+        return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(ErrorCode.BAD_REQUEST.name()));
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
     protected ResponseEntity<ErrorResponse> handleConstraintViolationException(ConstraintViolationException e) {
         var reasons = e.getConstraintViolations().stream().map(ConstraintViolation::getMessageTemplate).toList();
-        var httpStatusCode = HttpStatus.BAD_REQUEST;
-        var errorResponse = ErrorResponse.of(reasons, httpStatusCode.name());
-        return new ResponseEntity<>(errorResponse, httpStatusCode);
+        var errorResponse = ErrorResponse.of(reasons, ErrorCode.BAD_REQUEST);
+        return new ResponseEntity<>(errorResponse, HttpStatus.valueOf(ErrorCode.BAD_REQUEST.name()));
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
@@ -51,7 +51,7 @@ class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler 
     }
 
     private ResponseEntity<ErrorResponse> getErrorResponse(Exception e, HttpStatus status) {
-        var errorResponse = ErrorResponse.of(List.of(e.getMessage()), status.name());
+        var errorResponse = ErrorResponse.of(List.of(e.getMessage()), ErrorCode.BAD_REQUEST);
         return new ResponseEntity<>(errorResponse, status);
     }
 }
