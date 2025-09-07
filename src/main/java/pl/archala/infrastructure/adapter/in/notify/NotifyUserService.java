@@ -2,12 +2,12 @@ package pl.archala.infrastructure.adapter.in.notify;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
-import pl.archala.application.command.user.notify.NotifyUserApplicationInterface;
+import pl.archala.application.command.user.notify.NotifyUser;
 import pl.archala.application.command.user.notify.NotifyUserSendMoneyByEmailCommand;
 import pl.archala.application.command.user.notify.NotifyUserSendMoneyByPhoneCommand;
 
 @Slf4j
-public class NotifyUserService implements NotifyUserApplicationInterface {
+public class NotifyUserService implements NotifyUser {
 
     @Async("singleThreadTaskExecutor")
     public void notifyUserSendMoney(NotifyUserSendMoneyByPhoneCommand command) {

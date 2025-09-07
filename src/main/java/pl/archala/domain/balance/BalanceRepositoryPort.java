@@ -1,6 +1,6 @@
 package pl.archala.domain.balance;
 
-public interface BalanceRepositoryInterface {
+public interface BalanceRepositoryPort {
 
     Balance persistNew(Balance balance);
 

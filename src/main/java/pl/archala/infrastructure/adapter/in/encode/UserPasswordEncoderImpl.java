@@ -1,9 +1,9 @@
 package pl.archala.infrastructure.adapter.in.encode;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
-import pl.archala.domain.user.UserPasswordEncoderInterface;
+import pl.archala.domain.user.UserPasswordEncoder;
 
-public record UserPasswordEncoder(PasswordEncoder passwordEncoder) implements UserPasswordEncoderInterface {
+public record UserPasswordEncoderImpl(PasswordEncoder passwordEncoder) implements UserPasswordEncoder {
 
     @Override
     public char[] encode(String password) {

@@ -1,6 +1,6 @@
 package pl.archala.domain.user;
 
-public interface UserRepositoryInterface {
+public interface UserRepositoryPort {
 
     User persistNew(User user);
 

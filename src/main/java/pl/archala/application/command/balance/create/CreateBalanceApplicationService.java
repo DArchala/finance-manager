@@ -3,30 +3,30 @@ package pl.archala.application.command.balance.create;
 import pl.archala.application.api.error.ApplicationException;
 import pl.archala.application.api.error.ErrorCode;
 import pl.archala.domain.balance.Balance;
-import pl.archala.domain.balance.BalanceIdentifierGeneratorInterface;
-import pl.archala.domain.balance.BalanceRepositoryInterface;
-import pl.archala.domain.user.UserRepositoryInterface;
+import pl.archala.domain.balance.BalanceIdentifierGenerator;
+import pl.archala.domain.balance.BalanceRepositoryPort;
+import pl.archala.domain.user.UserRepositoryPort;
 import pl.archala.shared.TransactionExecutor;
 
 import java.util.Objects;
 
-public record CreateBalanceApplicationService(UserRepositoryInterface userRepository,
-                                              BalanceRepositoryInterface balanceRepository,
+public record CreateBalanceApplicationService(UserRepositoryPort userRepositoryPort,
+                                              BalanceRepositoryPort balanceRepositoryPort,
                                               TransactionExecutor transactionExecutor,
-                                              BalanceIdentifierGeneratorInterface balanceIdentifierGenerator) {
+                                              BalanceIdentifierGenerator balanceIdentifierGenerator) {
 
     public CreateBalanceResult createBalance(CreateBalanceCommand command) {
-        var user = userRepository.findUserByUsername(command.username());
+        var user = userRepositoryPort.findUserByUsername(command.username());
 
         if (Objects.nonNull(user.getBalance())) {
             throw ApplicationException.from("User with name: %s already contains balance.".formatted(command.username()), ErrorCode.UNPROCESSABLE_ENTITY);
         }
 
         var balance = transactionExecutor.executeInTransactionAndReturn(() -> {
-            var persistedBalance = balanceRepository.persistNew(Balance.create(balanceIdentifierGenerator.generate(),
-                                                                               command.balanceCode()
+            var persistedBalance = balanceRepositoryPort.persistNew(Balance.create(balanceIdentifierGenerator.generate(),
+                                                                                   command.balanceCode()
                                                                                       .getValue(),
-                                                                               user));
+                                                                                   user));
             user.updateBalance(persistedBalance);
             return persistedBalance;
         });

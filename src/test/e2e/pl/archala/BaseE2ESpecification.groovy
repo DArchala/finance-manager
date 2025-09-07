@@ -9,8 +9,8 @@ import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.testcontainers.containers.PostgreSQLContainer
-import pl.archala.infrastructure.adapter.out.persistance.balance.PostgresBalanceRepository
-import pl.archala.infrastructure.adapter.out.persistance.user.PostgresUserRepository
+import pl.archala.infrastructure.adapter.out.persistence.balance.JpaBalanceRepository
+import pl.archala.infrastructure.adapter.out.persistence.user.JpaUserRepository
 import spock.lang.Specification
 
 @ActiveProfiles("test")
@@ -25,10 +25,10 @@ abstract class BaseE2ESpecification extends Specification {
     PasswordEncoder passwordEncoder
 
     @Autowired
-    PostgresBalanceRepository balanceRepository
+    JpaBalanceRepository balanceRepository
 
     @Autowired
-    PostgresUserRepository userRepository
+    JpaUserRepository userRepository
 
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("test")

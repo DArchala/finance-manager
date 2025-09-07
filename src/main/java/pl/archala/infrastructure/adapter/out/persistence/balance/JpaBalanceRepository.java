@@ -1,4 +1,4 @@
-package pl.archala.infrastructure.adapter.out.persistance.balance;
+package pl.archala.infrastructure.adapter.out.persistence.balance;
 
 import io.hypersistence.utils.spring.repository.BaseJpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -8,7 +8,7 @@ import pl.archala.domain.balance.Balance;
 import java.util.List;
 import java.util.Optional;
 
-public interface PostgresBalanceRepository extends BaseJpaRepository<Balance, String> {
+public interface JpaBalanceRepository extends BaseJpaRepository<Balance, String> {
 
     @Modifying
     @Query("update Balance b set b.dailyTransactionsCount = 0")

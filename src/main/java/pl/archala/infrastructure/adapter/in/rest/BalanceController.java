@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import pl.archala.application.api.balance.RestCreateBalanceRequest;
-import pl.archala.application.api.balance.RestSendMoneyRequest;
+import pl.archala.application.api.send_money.RestSendMoneyRequest;
 import pl.archala.application.command.balance.create.CreateBalanceApplicationService;
 import pl.archala.application.command.balance.create.CreateBalanceCommand;
 import pl.archala.application.command.balance.create.CreateBalanceResult;

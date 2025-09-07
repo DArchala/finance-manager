@@ -1,12 +1,12 @@
 package pl.archala.infrastructure.adapter.out
 
-import pl.archala.infrastructure.adapter.in.generate.BalanceIdentifierGenerator
+import pl.archala.infrastructure.adapter.in.generate.BalanceIdentifierGeneratorImpl
 import spock.lang.Specification
 
 import java.security.SecureRandom
 import java.util.regex.Pattern
 
-class BalanceIdentifierGeneratorTest extends Specification {
+class BalanceIdentifierGeneratorImplTest extends Specification {
 
     SecureRandom secureRandom = new SecureRandom()
 
@@ -14,13 +14,13 @@ class BalanceIdentifierGeneratorTest extends Specification {
         given:
         def balanceIdPattern = Pattern.compile("^[0-9]{20}\$")
 
-        def generator = new BalanceIdentifierGenerator(secureRandom)
+        def generator = new BalanceIdentifierGeneratorImpl(secureRandom)
 
         when:
         def generatedId = generator.generate()
 
         then:
-        assert balanceIdPattern.matcher(generatedId).matches()
+        assert balanceIdPattern.matcher(generatedId.id()).matches()
     }
 
 }

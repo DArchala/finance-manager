@@ -9,19 +9,19 @@ import pl.archala.application.api.error.ApplicationException;
 import pl.archala.application.command.balance.create.CreateBalanceApplicationService;
 import pl.archala.application.command.balance.send_money.SendMoneyApplicationService;
 import pl.archala.application.command.user.create.CreateUserApplicationService;
-import pl.archala.application.command.user.notify.NotifyUserApplicationInterface;
-import pl.archala.domain.balance.BalanceIdentifierGeneratorInterface;
-import pl.archala.domain.balance.BalanceRepositoryInterface;
-import pl.archala.domain.user.UserPasswordEncoderInterface;
-import pl.archala.domain.user.UserRepositoryInterface;
-import pl.archala.infrastructure.adapter.in.encode.UserPasswordEncoder;
+import pl.archala.application.command.user.notify.NotifyUser;
+import pl.archala.domain.balance.BalanceIdentifierGenerator;
+import pl.archala.domain.balance.BalanceRepositoryPort;
+import pl.archala.domain.user.UserPasswordEncoder;
+import pl.archala.domain.user.UserRepositoryPort;
+import pl.archala.infrastructure.adapter.in.encode.UserPasswordEncoderImpl;
 import pl.archala.infrastructure.adapter.in.notify.NotifyUserService;
 import pl.archala.infrastructure.adapter.in.scheduling.TransactionsScheduler;
-import pl.archala.infrastructure.adapter.in.generate.BalanceIdentifierGenerator;
-import pl.archala.infrastructure.adapter.out.persistance.balance.BalanceRepository;
-import pl.archala.infrastructure.adapter.out.persistance.balance.PostgresBalanceRepository;
-import pl.archala.infrastructure.adapter.out.persistance.user.PostgresUserRepository;
-import pl.archala.infrastructure.adapter.out.persistance.user.UserRepository;
+import pl.archala.infrastructure.adapter.in.generate.BalanceIdentifierGeneratorImpl;
+import pl.archala.infrastructure.adapter.out.persistence.balance.PostgresBalanceRepository;
+import pl.archala.infrastructure.adapter.out.persistence.balance.JpaBalanceRepository;
+import pl.archala.infrastructure.adapter.out.persistence.user.JpaUserRepository;
+import pl.archala.infrastructure.adapter.out.persistence.user.PostgresUserRepository;
 import pl.archala.infrastructure.config.security.SecurityUserDetails;
 import pl.archala.shared.TransactionExecutor;
 
@@ -36,59 +36,59 @@ class BeanConfiguration {
     }
 
     @Bean
-    BalanceIdentifierGenerator balanceIdentifierGenerator(SecureRandom secureRandom) {
-        return new BalanceIdentifierGenerator(secureRandom);
+    BalanceIdentifierGeneratorImpl balanceIdentifierGenerator(SecureRandom secureRandom) {
+        return new BalanceIdentifierGeneratorImpl(secureRandom);
     }
 
     @Bean
-    BalanceRepository balanceRepository(PostgresBalanceRepository postgresBalanceRepository) {
-        return new BalanceRepository(postgresBalanceRepository);
+    PostgresBalanceRepository balanceRepository(JpaBalanceRepository jpaBalanceRepository) {
+        return new PostgresBalanceRepository(jpaBalanceRepository);
     }
 
     @Bean
-    UserRepository userRepository(PostgresUserRepository postgresUserRepository) {
-        return new UserRepository(postgresUserRepository);
+    PostgresUserRepository userRepository(JpaUserRepository jpaUserRepository) {
+        return new PostgresUserRepository(jpaUserRepository);
     }
 
     @Bean
-    TransactionsScheduler transactionsScheduler(BalanceRepository balanceRepository) {
-        return new TransactionsScheduler(balanceRepository);
+    TransactionsScheduler transactionsScheduler(PostgresBalanceRepository postgresBalanceRepository) {
+        return new TransactionsScheduler(postgresBalanceRepository);
     }
 
     @Bean
-    SendMoneyApplicationService sendMoneyApplicationService(UserRepositoryInterface userRepository,
-                                                            BalanceRepositoryInterface balanceRepository,
-                                                            NotifyUserApplicationInterface notifyUserApplicationInterface,
+    SendMoneyApplicationService sendMoneyApplicationService(UserRepositoryPort userRepositoryPort,
+                                                            BalanceRepositoryPort balanceRepositoryPort,
+                                                            NotifyUser notifyUser,
                                                             TransactionExecutor transactionExecutor) {
-        return new SendMoneyApplicationService(userRepository,
-                                               balanceRepository,
-                                               notifyUserApplicationInterface,
+        return new SendMoneyApplicationService(userRepositoryPort,
+                                               balanceRepositoryPort,
+                                               notifyUser,
                                                transactionExecutor);
     }
 
     @Bean
-    CreateBalanceApplicationService createBalanceApplicationService(UserRepositoryInterface userRepository,
-                                                                    BalanceRepositoryInterface balanceRepository,
+    CreateBalanceApplicationService createBalanceApplicationService(UserRepositoryPort userRepositoryPort,
+                                                                    BalanceRepositoryPort balanceRepositoryPort,
                                                                     TransactionExecutor transactionExecutor,
-                                                                    BalanceIdentifierGeneratorInterface balanceIdentifierGenerator) {
-        return new CreateBalanceApplicationService(userRepository,
-                                                   balanceRepository,
+                                                                    BalanceIdentifierGenerator balanceIdentifierGenerator) {
+        return new CreateBalanceApplicationService(userRepositoryPort,
+                                                   balanceRepositoryPort,
                                                    transactionExecutor,
                                                    balanceIdentifierGenerator);
     }
 
     @Bean
-    NotifyUserService notifyUserService() {
+    NotifyUser notifyUser() {
         return new NotifyUserService();
     }
 
     @Bean
-    CreateUserApplicationService createUserApplicationService(UserPasswordEncoderInterface userPasswordEncoderInterface,
+    CreateUserApplicationService createUserApplicationService(UserPasswordEncoder userPasswordEncoder,
                                                               TransactionExecutor transactionExecutor,
-                                                              UserRepositoryInterface userRepository) {
-        return new CreateUserApplicationService(userPasswordEncoderInterface,
+                                                              UserRepositoryPort userRepositoryPort) {
+        return new CreateUserApplicationService(userPasswordEncoder,
                                                 transactionExecutor,
-                                                userRepository);
+                                                userRepositoryPort);
     }
 
     @Bean
@@ -98,11 +98,11 @@ class BeanConfiguration {
 
     @Bean
     UserPasswordEncoder userPasswordEncoder(PasswordEncoder passwordEncoder) {
-        return new UserPasswordEncoder(passwordEncoder);
+        return new UserPasswordEncoderImpl(passwordEncoder);
     }
 
     @Bean
-    UserDetailsService userDetailsService(PostgresUserRepository userRepository) {
+    UserDetailsService userDetailsService(JpaUserRepository userRepository) {
         return username -> userRepository.findUserByUsername(username)
                                          .map(SecurityUserDetails::new)
                                          .orElseThrow(() -> ApplicationException.notFound("User with username: %s, not found".formatted(username)));

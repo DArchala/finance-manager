@@ -3,31 +3,31 @@ package pl.archala.application.command.balance.send_money;
 import lombok.extern.slf4j.Slf4j;
 import pl.archala.application.api.error.ApplicationException;
 import pl.archala.application.api.error.ErrorCode;
-import pl.archala.application.command.user.notify.NotifyUserApplicationInterface;
+import pl.archala.application.command.user.notify.NotifyUser;
 import pl.archala.application.command.user.notify.NotifyUserSendMoneyByEmailCommand;
 import pl.archala.application.command.user.notify.NotifyUserSendMoneyByPhoneCommand;
 import pl.archala.domain.balance.Balance;
-import pl.archala.domain.balance.BalanceRepositoryInterface;
-import pl.archala.domain.user.UserRepositoryInterface;
+import pl.archala.domain.balance.BalanceRepositoryPort;
+import pl.archala.domain.user.UserRepositoryPort;
 import pl.archala.shared.TransactionExecutor;
 
 import java.util.Optional;
 
 @Slf4j
-public record SendMoneyApplicationService(UserRepositoryInterface userRepository,
-                                          BalanceRepositoryInterface balanceRepository,
-                                          NotifyUserApplicationInterface notifyUserApplicationInterface,
+public record SendMoneyApplicationService(UserRepositoryPort userRepositoryPort,
+                                          BalanceRepositoryPort balanceRepositoryPort,
+                                          NotifyUser notifyUser,
                                           TransactionExecutor transactionExecutor) {
 
     public void sendMoney(SendMoneyCommand command) {
-        var userContractor = userRepository.findUserByUsername(command.username());
+        var userContractor = userRepositoryPort.findUserByUsername(command.username());
         var sourceBalance = Optional.ofNullable(userContractor.getBalance())
                                     .orElseThrow(() -> ApplicationException.notFound("User with username: %s, does not have balance".formatted(command.username())));
 
         validateSourceBalanceAmount(sourceBalance, command);
         validateSourceBalanceLimit(sourceBalance);
 
-        var targetBalance = balanceRepository.findById(command.targetBalanceId());
+        var targetBalance = balanceRepositoryPort.findById(command.targetBalanceId());
 
         transactionExecutor.executeInTransaction(() -> {
             sourceBalance.subtract(command.value());
@@ -36,8 +36,8 @@ public record SendMoneyApplicationService(UserRepositoryInterface userRepository
         });
 
         switch (userContractor.getNotificationChannel()) {
-        case EMAIL -> notifyUserApplicationInterface.notifyUserSendMoney(new NotifyUserSendMoneyByEmailCommand(userContractor.getEmail()));
-        case SMS -> notifyUserApplicationInterface.notifyUserSendMoney(new NotifyUserSendMoneyByPhoneCommand(userContractor.getPhone()));
+        case EMAIL -> notifyUser.notifyUserSendMoney(new NotifyUserSendMoneyByEmailCommand(userContractor.getEmail()));
+        case SMS -> notifyUser.notifyUserSendMoney(new NotifyUserSendMoneyByPhoneCommand(userContractor.getPhone()));
         }
     }
 

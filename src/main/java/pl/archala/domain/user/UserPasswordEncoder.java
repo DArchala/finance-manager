@@ -1,6 +1,6 @@
 package pl.archala.domain.user;
 
-public interface UserPasswordEncoderInterface {
+public interface UserPasswordEncoder {
 
     char[] encode(String password);
 

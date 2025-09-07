@@ -1,6 +1,6 @@
 package pl.archala.application.command.user.notify;
 
-public interface NotifyUserApplicationInterface {
+public interface NotifyUser {
 
     void notifyUserSendMoney(NotifyUserSendMoneyByPhoneCommand command);
 

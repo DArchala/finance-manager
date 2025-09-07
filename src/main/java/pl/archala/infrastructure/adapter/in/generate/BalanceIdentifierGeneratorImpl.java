@@ -1,13 +1,13 @@
 package pl.archala.infrastructure.adapter.in.generate;
 
 import pl.archala.domain.balance.BalanceGeneratedIdentifier;
-import pl.archala.domain.balance.BalanceIdentifierGeneratorInterface;
+import pl.archala.domain.balance.BalanceIdentifierGenerator;
 
 import java.security.SecureRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public record BalanceIdentifierGenerator(SecureRandom secureRandom) implements BalanceIdentifierGeneratorInterface {
+public record BalanceIdentifierGeneratorImpl(SecureRandom secureRandom) implements BalanceIdentifierGenerator {
 
     private static final int DEFAULT_LENGTH = 20;
 
@@ -16,6 +16,7 @@ public record BalanceIdentifierGenerator(SecureRandom secureRandom) implements B
     but 20-digits password can have 10^20 combinations, so for this demo app it is
     enough, and we do not have to worry about it
      */
+    @Override
     public BalanceGeneratedIdentifier generate() {
         var identifier = Stream.generate(() -> secureRandom.nextInt(10))
                                .limit(DEFAULT_LENGTH)

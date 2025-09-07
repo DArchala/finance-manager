@@ -1,4 +1,4 @@
-package pl.archala.application.api.balance;
+package pl.archala.application.api.send_money;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
