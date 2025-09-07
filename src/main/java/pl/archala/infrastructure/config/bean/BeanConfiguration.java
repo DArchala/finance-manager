@@ -10,13 +10,14 @@ import pl.archala.application.command.balance.create.CreateBalanceApplicationSer
 import pl.archala.application.command.balance.send_money.SendMoneyApplicationService;
 import pl.archala.application.command.user.create.CreateUserApplicationService;
 import pl.archala.application.command.user.notify.NotifyUserApplicationInterface;
+import pl.archala.domain.balance.BalanceIdentifierGeneratorInterface;
 import pl.archala.domain.balance.BalanceRepositoryInterface;
 import pl.archala.domain.user.UserPasswordEncoderInterface;
 import pl.archala.domain.user.UserRepositoryInterface;
 import pl.archala.infrastructure.adapter.in.encode.UserPasswordEncoder;
 import pl.archala.infrastructure.adapter.in.notify.NotifyUserService;
 import pl.archala.infrastructure.adapter.in.scheduling.TransactionsScheduler;
-import pl.archala.infrastructure.adapter.out.BalanceIdentifierGenerator;
+import pl.archala.infrastructure.adapter.in.generate.BalanceIdentifierGenerator;
 import pl.archala.infrastructure.adapter.out.persistance.balance.BalanceRepository;
 import pl.archala.infrastructure.adapter.out.persistance.balance.PostgresBalanceRepository;
 import pl.archala.infrastructure.adapter.out.persistance.user.PostgresUserRepository;
@@ -68,10 +69,12 @@ class BeanConfiguration {
     @Bean
     CreateBalanceApplicationService createBalanceApplicationService(UserRepositoryInterface userRepository,
                                                                     BalanceRepositoryInterface balanceRepository,
-                                                                    TransactionExecutor transactionExecutor) {
+                                                                    TransactionExecutor transactionExecutor,
+                                                                    BalanceIdentifierGeneratorInterface balanceIdentifierGenerator) {
         return new CreateBalanceApplicationService(userRepository,
                                                    balanceRepository,
-                                                   transactionExecutor);
+                                                   transactionExecutor,
+                                                   balanceIdentifierGenerator);
     }
 
     @Bean

@@ -1,21 +1,19 @@
 package pl.archala.application.command.balance.create;
 
-import lombok.RequiredArgsConstructor;
 import pl.archala.application.api.error.ApplicationException;
 import pl.archala.application.api.error.ErrorCode;
 import pl.archala.domain.balance.Balance;
+import pl.archala.domain.balance.BalanceIdentifierGeneratorInterface;
 import pl.archala.domain.balance.BalanceRepositoryInterface;
 import pl.archala.domain.user.UserRepositoryInterface;
 import pl.archala.shared.TransactionExecutor;
 
 import java.util.Objects;
 
-@RequiredArgsConstructor
-public class CreateBalanceApplicationService {
-
-    private final UserRepositoryInterface userRepository;
-    private final BalanceRepositoryInterface balanceRepository;
-    private final TransactionExecutor transactionExecutor;
+public record CreateBalanceApplicationService(UserRepositoryInterface userRepository,
+                                              BalanceRepositoryInterface balanceRepository,
+                                              TransactionExecutor transactionExecutor,
+                                              BalanceIdentifierGeneratorInterface balanceIdentifierGenerator) {
 
     public CreateBalanceResult createBalance(CreateBalanceCommand command) {
         var user = userRepository.findUserByUsername(command.username());
@@ -25,8 +23,9 @@ public class CreateBalanceApplicationService {
         }
 
         var balance = transactionExecutor.executeInTransactionAndReturn(() -> {
-            var persistedBalance = balanceRepository.persistNew(Balance.create(null, command.balanceCode()
-                                                                                            .getValue(),
+            var persistedBalance = balanceRepository.persistNew(Balance.create(balanceIdentifierGenerator.generate(),
+                                                                               command.balanceCode()
+                                                                                      .getValue(),
                                                                                user));
             user.updateBalance(persistedBalance);
             return persistedBalance;

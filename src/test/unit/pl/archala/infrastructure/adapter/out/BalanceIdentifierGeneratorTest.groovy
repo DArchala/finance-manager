@@ -1,6 +1,6 @@
 package pl.archala.infrastructure.adapter.out
 
-
+import pl.archala.infrastructure.adapter.in.generate.BalanceIdentifierGenerator
 import spock.lang.Specification
 
 import java.security.SecureRandom

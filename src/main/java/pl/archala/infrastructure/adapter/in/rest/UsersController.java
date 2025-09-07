@@ -12,6 +12,9 @@ import pl.archala.application.command.user.create.CreateUserResult;
 import pl.archala.application.query.find_user_balance_details.FindUserBalanceDetails;
 import pl.archala.application.query.find_user_balance_details.FindUserBalanceDetailsQuery;
 import pl.archala.application.query.find_user_balance_details.FindUserBalanceDetailsView;
+import pl.archala.application.query.find_user_details.FindUserDetails;
+import pl.archala.application.query.find_user_details.FindUserDetailsQuery;
+import pl.archala.application.query.find_user_details.FindUserDetailsView;
 
 import java.security.Principal;
 
@@ -23,6 +26,7 @@ public class UsersController {
 
     private final CreateUserApplicationService createUserApplicationService;
     private final FindUserBalanceDetails findUserBalanceDetails;
+    private final FindUserDetails findUserDetails;
 
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping("/register")
@@ -41,6 +45,13 @@ public class UsersController {
     public FindUserBalanceDetailsView getUserWithBalanceDetails(Principal principal) {
         var filter = new FindUserBalanceDetailsQuery(principal.getName());
         return findUserBalanceDetails.findUserBalanceDetails(filter);
+    }
+
+
+    @GetMapping("/user-details")
+    public FindUserDetailsView getUserDetails(Principal principal) {
+        var filter = new FindUserDetailsQuery(principal.getName());
+        return findUserDetails.findUserDetails(filter);
     }
 
 }

@@ -1,13 +1,14 @@
 package pl.archala.infrastructure.adapter.out.persistance.balance;
 
+import pl.archala.application.api.error.ApplicationException;
 import pl.archala.application.query.find_user_balance_details.FindUserBalanceDetails;
 import pl.archala.application.query.find_user_balance_details.FindUserBalanceDetailsQuery;
 import pl.archala.application.query.find_user_balance_details.FindUserBalanceDetailsView;
 import pl.archala.domain.balance.Balance;
 import pl.archala.domain.balance.BalanceRepositoryInterface;
-import pl.archala.application.api.error.ApplicationException;
 
-public record BalanceRepository(PostgresBalanceRepository postgresBalanceRepository) implements FindUserBalanceDetails, BalanceRepositoryInterface {
+public record BalanceRepository(PostgresBalanceRepository postgresBalanceRepository) implements FindUserBalanceDetails,
+                                                                                                BalanceRepositoryInterface {
 
     @Override
     public Balance persistNew(Balance balance) {

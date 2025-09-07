@@ -15,6 +15,7 @@ class UserFixture {
         def notificationChannel = (map.notificationChannel ?: NotificationChannel.EMAIL) as NotificationChannel
         def balance = (map.balance ?: null) as Balance
         def externalUuid = (map.externalUuid ?: UUID.randomUUID()) as UUID
+        def version = (map.version ?: 0L) as Long
         return new User(id,
                         username,
                         password,
@@ -22,7 +23,8 @@ class UserFixture {
                         email,
                         notificationChannel,
                         balance,
-                        externalUuid)
+                        externalUuid,
+                        version)
     }
 
 }
