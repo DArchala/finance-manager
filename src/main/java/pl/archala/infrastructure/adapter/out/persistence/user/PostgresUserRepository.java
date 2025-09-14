@@ -22,7 +22,7 @@ public class PostgresUserRepository implements UserRepositoryPort, FindUserDetai
             jpaUserRepository.persist(user);
         } catch (DataIntegrityViolationException e) {
             log.info("User with name: {} already exists", user.getName());
-            log.debug("DataIntegrityViolationException: ", e);
+            log.info("DataIntegrityViolationException: ", e);
             var message = e.getMostSpecificCause()
                            .getMessage();
             if (message.contains("users_name_key")) {
