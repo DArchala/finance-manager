@@ -6,9 +6,9 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import pl.archala.domain.notification.NotificationChannel;
 
-public record RestCreateUserRequest(@NotBlank(message = "Username must not be blank")
-                                    @Size(min = 6, max = 30, message = "Username must contains min 6 and max 30 chars")
-                                    String username,
+public record RestCreateUserRequest(@NotBlank(message = "User name must not be blank")
+                                    @Size(min = 6, max = 30, message = "User name must contains min 6 and max 30 chars")
+                                    String name,
 
                                     @NotBlank(message = "User password must not be blank")
                                     @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=]).{8,30}$",

@@ -14,7 +14,7 @@ class BalanceControllerTest extends BaseE2ESpecification {
 
     def 'Should create balance for user'() {
         given:
-        def currentUser = userRepository.persist(UserFixture.custom(passwordEncoder))
+        def currentUser = userRepository.persist(UserFixture.custom(userPasswordEncoder))
 
         def request = new RestCreateBalanceRequest(BalanceCode.CODE_1)
 
@@ -47,8 +47,8 @@ class BalanceControllerTest extends BaseE2ESpecification {
 
     def 'Should throw exception if user already has balance'() {
         given:
-        def currentUser = userRepository.persistAndFlush(UserFixture.custom(passwordEncoder))
-        def currentBalance = balanceRepository.persistAndFlush(BalanceFixture.custom(balanceIdentifierGenerator))
+        def currentUser = userRepository.persistAndFlush(UserFixture.custom(userPasswordEncoder))
+        def currentBalance = balanceRepository.persistAndFlush(BalanceFixture.custom(generateBalanceIdentifier))
 
         currentBalance.updateUser(currentUser)
         currentUser.updateBalance(currentBalance)

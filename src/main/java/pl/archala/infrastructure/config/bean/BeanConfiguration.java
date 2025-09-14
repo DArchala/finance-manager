@@ -10,14 +10,14 @@ import pl.archala.application.command.balance.create.CreateBalanceApplicationSer
 import pl.archala.application.command.balance.send_money.SendMoneyApplicationService;
 import pl.archala.application.command.user.create.CreateUserApplicationService;
 import pl.archala.application.command.user.notify.NotifyUser;
-import pl.archala.domain.balance.BalanceIdentifierGenerator;
+import pl.archala.domain.balance.GenerateBalanceIdentifier;
 import pl.archala.domain.balance.BalanceRepositoryPort;
-import pl.archala.domain.user.UserPasswordEncoder;
+import pl.archala.domain.user.EncodePassword;
 import pl.archala.domain.user.UserRepositoryPort;
-import pl.archala.infrastructure.adapter.in.encode.UserPasswordEncoderImpl;
+import pl.archala.infrastructure.adapter.in.encode.UserPasswordEncoder;
 import pl.archala.infrastructure.adapter.in.notify.NotifyUserService;
 import pl.archala.infrastructure.adapter.in.scheduling.TransactionsScheduler;
-import pl.archala.infrastructure.adapter.in.generate.BalanceIdentifierGeneratorImpl;
+import pl.archala.infrastructure.adapter.in.generate.BalanceIdentifierGenerator;
 import pl.archala.infrastructure.adapter.out.persistence.balance.PostgresBalanceRepository;
 import pl.archala.infrastructure.adapter.out.persistence.balance.JpaBalanceRepository;
 import pl.archala.infrastructure.adapter.out.persistence.user.JpaUserRepository;
@@ -36,8 +36,8 @@ class BeanConfiguration {
     }
 
     @Bean
-    BalanceIdentifierGeneratorImpl balanceIdentifierGenerator(SecureRandom secureRandom) {
-        return new BalanceIdentifierGeneratorImpl(secureRandom);
+    BalanceIdentifierGenerator balanceIdentifierGenerator(SecureRandom secureRandom) {
+        return new BalanceIdentifierGenerator(secureRandom);
     }
 
     @Bean
@@ -70,11 +70,11 @@ class BeanConfiguration {
     CreateBalanceApplicationService createBalanceApplicationService(UserRepositoryPort userRepositoryPort,
                                                                     BalanceRepositoryPort balanceRepositoryPort,
                                                                     TransactionExecutor transactionExecutor,
-                                                                    BalanceIdentifierGenerator balanceIdentifierGenerator) {
+                                                                    GenerateBalanceIdentifier generateBalanceIdentifier) {
         return new CreateBalanceApplicationService(userRepositoryPort,
                                                    balanceRepositoryPort,
                                                    transactionExecutor,
-                                                   balanceIdentifierGenerator);
+                                                   generateBalanceIdentifier);
     }
 
     @Bean
@@ -83,10 +83,10 @@ class BeanConfiguration {
     }
 
     @Bean
-    CreateUserApplicationService createUserApplicationService(UserPasswordEncoder userPasswordEncoder,
+    CreateUserApplicationService createUserApplicationService(EncodePassword encodePassword,
                                                               TransactionExecutor transactionExecutor,
                                                               UserRepositoryPort userRepositoryPort) {
-        return new CreateUserApplicationService(userPasswordEncoder,
+        return new CreateUserApplicationService(encodePassword,
                                                 transactionExecutor,
                                                 userRepositoryPort);
     }
@@ -97,15 +97,15 @@ class BeanConfiguration {
     }
 
     @Bean
-    UserPasswordEncoder userPasswordEncoder(PasswordEncoder passwordEncoder) {
-        return new UserPasswordEncoderImpl(passwordEncoder);
+    EncodePassword userPasswordEncoder(PasswordEncoder passwordEncoder) {
+        return new UserPasswordEncoder(passwordEncoder);
     }
 
     @Bean
     UserDetailsService userDetailsService(JpaUserRepository userRepository) {
-        return username -> userRepository.findByName(username)
-                                         .map(SecurityUserDetails::new)
-                                         .orElseThrow(() -> ApplicationException.notFound("User with username: %s, not found".formatted(username)));
+        return name -> userRepository.findByName(name)
+                                     .map(SecurityUserDetails::new)
+                                     .orElseThrow(() -> ApplicationException.notFound("User with name: %s, not found".formatted(name)));
     }
 
 }

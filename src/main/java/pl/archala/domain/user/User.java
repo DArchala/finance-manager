@@ -52,9 +52,9 @@ public class User {
     @Version
     private Long version;
 
-    public static User create(String username, char[] password, String phone, String email, NotificationChannel notificationChannel) {
+    public static User create(String name, char[] password, String phone, String email, NotificationChannel notificationChannel) {
         return new User(null,
-                        username,
+                        name,
                         password,
                         phone,
                         email,
@@ -66,6 +66,10 @@ public class User {
 
     public void updateBalance(Balance balance) {
         this.balance = balance;
+    }
+
+    public boolean hasBalance() {
+        return balance != null;
     }
 
     @Override

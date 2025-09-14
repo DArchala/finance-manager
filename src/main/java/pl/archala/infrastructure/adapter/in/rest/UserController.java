@@ -22,7 +22,7 @@ import java.security.Principal;
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
 @RestController
-public class UsersController {
+public class UserController {
 
     private final CreateUserApplicationService createUserApplicationService;
     private final FindUserBalanceDetails findUserBalanceDetails;
@@ -31,13 +31,13 @@ public class UsersController {
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping("/register")
     public CreateUserResult create(@RequestBody @Valid RestCreateUserRequest request) {
-        var command = new CreateUserCommand(request.username(),
+        var command = new CreateUserCommand(request.name(),
                                             request.password(),
                                             request.phone(),
                                             request.email(),
                                             request.notificationChannel());
         var createUserResult = createUserApplicationService.createUser(command);
-        log.info("User {} has been registered", command.username());
+        log.info("User with name: {} has been created", command.name());
         return createUserResult;
     }
 

@@ -7,8 +7,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 import pl.archala.domain.balance.BalanceSchedulerPort;
 
-import java.time.Instant;
-
 @Slf4j
 @RequiredArgsConstructor
 @EnableScheduling
@@ -21,7 +19,7 @@ public class TransactionsScheduler {
     public void resetTransactionsLimits() {
         log.info("All transactions limits are resetting to 0...");
         balanceSchedulerPort.resetTransactionsForAllBalances();
-        log.info("Transactions limits reset done {}", Instant.now());
+        log.info("Transactions limits reset finished.");
     }
 
 }

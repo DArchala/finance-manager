@@ -1,6 +1,6 @@
 package pl.archala.domain.balance;
 
-public interface BalanceIdentifierGenerator {
+public interface GenerateBalanceIdentifier {
 
     BalanceGeneratedIdentifier generate();
 

@@ -4,5 +4,5 @@ import java.math.BigDecimal;
 
 public record SendMoneyCommand(String username,
                                String targetBalanceId,
-                               BigDecimal value) {
+                               BigDecimal amount) {
 }

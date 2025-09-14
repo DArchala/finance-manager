@@ -3,13 +3,13 @@ package pl.archala
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.springframework.test.web.reactive.server.WebTestClient
 import org.testcontainers.containers.PostgreSQLContainer
-import pl.archala.domain.balance.BalanceIdentifierGenerator
+import pl.archala.domain.balance.GenerateBalanceIdentifier
+import pl.archala.infrastructure.adapter.in.encode.UserPasswordEncoder
 import pl.archala.infrastructure.adapter.out.persistence.balance.JpaBalanceRepository
 import pl.archala.infrastructure.adapter.out.persistence.user.JpaUserRepository
 import spock.lang.Specification
@@ -23,7 +23,7 @@ abstract class BaseE2ESpecification extends Specification {
     WebTestClient webTestClient
 
     @Autowired
-    PasswordEncoder passwordEncoder
+    UserPasswordEncoder userPasswordEncoder
 
     @Autowired
     JpaBalanceRepository balanceRepository
@@ -32,7 +32,7 @@ abstract class BaseE2ESpecification extends Specification {
     JpaUserRepository userRepository
 
     @Autowired
-    BalanceIdentifierGenerator balanceIdentifierGenerator
+    GenerateBalanceIdentifier generateBalanceIdentifier
 
     static final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("test")

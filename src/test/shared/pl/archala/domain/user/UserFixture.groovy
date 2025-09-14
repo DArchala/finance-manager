@@ -1,15 +1,16 @@
 package pl.archala.domain.user
 
-import org.springframework.security.crypto.password.PasswordEncoder
+
 import pl.archala.domain.balance.Balance
 import pl.archala.domain.notification.NotificationChannel
+import pl.archala.infrastructure.adapter.in.encode.UserPasswordEncoder
 
 class UserFixture {
 
-    static User custom(Map map = [:], PasswordEncoder passwordEncoder) {
+    static User custom(Map map = [:], UserPasswordEncoder userPasswordEncoder) {
         def id = (map.id ?: null) as Long
-        def username = (map.username ?: "username") as String
-        def password = (map.password ?: passwordEncoder.encode("password").toCharArray()) as char[]
+        def name = (map.name ?: "name") as String
+        def password = (map.password ?: userPasswordEncoder.encode("password")) as char[]
         def phone = (map.phone ?: "123123123") as String
         def email = (map.email ?: "user@home.com") as String
         def notificationChannel = (map.notificationChannel ?: NotificationChannel.EMAIL) as NotificationChannel
@@ -17,7 +18,7 @@ class UserFixture {
         def externalUuid = (map.externalUuid ?: UUID.randomUUID()) as UUID
         def version = (map.version ?: 0L) as Long
         return new User(id,
-                        username,
+                        name,
                         password,
                         phone,
                         email,

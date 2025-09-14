@@ -40,9 +40,6 @@ public class Balance {
     }
 
     public void add(BigDecimal amount) {
-        if (amount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new ArithmeticException("It is unavailable to add negative amount to balance");
-        }
         this.amount = this.amount.add(amount);
     }
 
@@ -54,25 +51,25 @@ public class Balance {
         dailyTransactionsCount++;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Balance balance)) {
-            return false;
-        }
-        return dailyTransactionsCount == balance.dailyTransactionsCount && Objects.equals(id, balance.id) && Objects.equals(amount, balance.amount) &&
-               Objects.equals(user, balance.user);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, amount, dailyTransactionsCount);
-    }
-
     public static Balance create(BalanceGeneratedIdentifier identifier, BigDecimal value, User user) {
         return new Balance(null, identifier.id(), value, user, 0, 0L);
     }
 
     public void updateUser(User user) {
         this.user = user;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Balance balance)) {
+            return false;
+        }
+        return dailyTransactionsCount == balance.dailyTransactionsCount && Objects.equals(id, balance.id) && Objects.equals(generatedId, balance.generatedId) &&
+               Objects.equals(amount, balance.amount) && Objects.equals(version, balance.version);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, generatedId, amount, dailyTransactionsCount, version);
     }
 }

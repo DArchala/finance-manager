@@ -11,6 +11,7 @@ import pl.archala.domain.balance.BalanceRepositoryPort;
 import pl.archala.domain.user.UserRepositoryPort;
 import pl.archala.shared.TransactionExecutor;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 @Slf4j
@@ -20,18 +21,18 @@ public record SendMoneyApplicationService(UserRepositoryPort userRepositoryPort,
                                           TransactionExecutor transactionExecutor) {
 
     public void sendMoney(SendMoneyCommand command) {
-        var userContractor = userRepositoryPort.findUserByUsername(command.username());
+        var userContractor = userRepositoryPort.findByName(command.username());
         var sourceBalance = Optional.ofNullable(userContractor.getBalance())
-                                    .orElseThrow(() -> ApplicationException.notFound("User with username: %s, does not have balance".formatted(command.username())));
+                                    .orElseThrow(() -> ApplicationException.notFound("User with name: %s, does not have balance".formatted(command.username())));
 
-        validateSourceBalanceAmount(sourceBalance, command);
+        validateSourceBalanceAmount(sourceBalance, command.amount());
         validateSourceBalanceLimit(sourceBalance);
 
         var targetBalance = balanceRepositoryPort.findById(command.targetBalanceId());
 
         transactionExecutor.executeInTransaction(() -> {
-            sourceBalance.subtract(command.value());
-            targetBalance.add(command.value());
+            sourceBalance.subtract(command.amount());
+            targetBalance.add(command.amount());
             sourceBalance.incrementTransactions();
         });
 
@@ -47,9 +48,9 @@ public record SendMoneyApplicationService(UserRepositoryPort userRepositoryPort,
         }
     }
 
-    private void validateSourceBalanceAmount(Balance sourceBalance, SendMoneyCommand command) {
-        if (!sourceBalance.containsAtLeast(command.value())) {
-            throw ApplicationException.from("Balance with id %s does not contain money amount to send amount: %s".formatted(sourceBalance.getId(), command.value()),
+    private void validateSourceBalanceAmount(Balance sourceBalance, BigDecimal amount) {
+        if (!sourceBalance.containsAtLeast(amount)) {
+            throw ApplicationException.from("Balance with id %s does not contain money amount to send amount: %s".formatted(sourceBalance.getId(), amount),
                                             ErrorCode.UNPROCESSABLE_ENTITY);
         }
     }

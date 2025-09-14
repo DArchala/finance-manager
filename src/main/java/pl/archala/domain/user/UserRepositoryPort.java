@@ -4,6 +4,6 @@ public interface UserRepositoryPort {
 
     User persistNew(User user);
 
-    User findUserByUsername(String username);
+    User findByName(String name);
 
 }

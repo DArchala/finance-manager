@@ -9,11 +9,13 @@ import java.util.concurrent.Executor;
 
 @Configuration
 @EnableAsync
-class AsyncConfiguration {
+public class AsyncConfiguration {
 
-    @Bean(name = "singleThreadTaskExecutor")
+    public static final String SINGLE_THREAD_EXECUTOR_BEAN = "singleThreadTaskExecutor";
+
+    @Bean(name = SINGLE_THREAD_EXECUTOR_BEAN)
     public Executor singleThreadTaskExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        var executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(1);
         executor.setMaxPoolSize(1);
         executor.setQueueCapacity(100);

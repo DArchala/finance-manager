@@ -1,13 +1,13 @@
 package pl.archala.infrastructure.adapter.in.generate;
 
 import pl.archala.domain.balance.BalanceGeneratedIdentifier;
-import pl.archala.domain.balance.BalanceIdentifierGenerator;
+import pl.archala.domain.balance.GenerateBalanceIdentifier;
 
 import java.security.SecureRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public record BalanceIdentifierGeneratorImpl(SecureRandom secureRandom) implements BalanceIdentifierGenerator {
+public record BalanceIdentifierGenerator(SecureRandom secureRandom) implements GenerateBalanceIdentifier {
 
     private static final int DEFAULT_LENGTH = 20;
 
