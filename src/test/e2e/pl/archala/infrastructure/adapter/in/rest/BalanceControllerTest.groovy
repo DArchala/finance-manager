@@ -1,12 +1,10 @@
-package pl.archala.infrastructure.adapter.out.rest
-
+package pl.archala.infrastructure.adapter.in.rest
 
 import pl.archala.BaseE2ESpecification
 import pl.archala.application.api.balance.RestCreateBalanceRequest
 import pl.archala.application.command.balance.create.CreateBalanceResult
 import pl.archala.domain.balance.Balance
 import pl.archala.domain.balance.BalanceCode
-import pl.archala.domain.balance.BalanceFixture
 import pl.archala.domain.user.User
 import pl.archala.domain.user.UserFixture
 
@@ -20,12 +18,12 @@ class BalanceControllerTest extends BaseE2ESpecification {
 
         when:
         def createBalanceResult = webTestClient.post().uri("/api/balance")
-                                .bodyValue(request)
-                                .headers(headers -> headers.setBasicAuth(currentUser.getName(), "password"))
-                                .exchange()
-                                .expectStatus().isCreated()
-                                .expectBody(CreateBalanceResult.class)
-                                .returnResult().getResponseBody()
+                                               .bodyValue(request)
+                                               .headers(headers -> headers.setBasicAuth(currentUser.getName(), "password"))
+                                               .exchange()
+                                               .expectStatus().isCreated()
+                                               .expectBody(CreateBalanceResult.class)
+                                               .returnResult().getResponseBody()
 
         then: 'Should be created one balance'
         def balances = balanceRepository.findAll()
@@ -33,11 +31,11 @@ class BalanceControllerTest extends BaseE2ESpecification {
 
         def balance = balances.first() as Balance
         balance.getDailyTransactionsCount() == 0
-        balance.getId() == createBalanceResult.balanceId()
+        balance.getGeneratedId() == createBalanceResult.balanceId()
         balance.getUser().getId() == currentUser.getId()
         balance.getAmount() == request.balanceCode().getValue()
 
-        and: 'User should has assigned new balance'
+        and: 'User should has assigned the balance'
         def users = userRepository.findAll()
         users.size() == 1
 
@@ -47,41 +45,42 @@ class BalanceControllerTest extends BaseE2ESpecification {
 
     def 'Should throw exception if user already has balance'() {
         given:
-        def currentUser = userRepository.persistAndFlush(UserFixture.custom(userPasswordEncoder))
-        def currentBalance = balanceRepository.persistAndFlush(BalanceFixture.custom(generateBalanceIdentifier))
+        def persistedUser = userRepository.persist(UserFixture.custom(userPasswordEncoder))
+        def persistedBalance = balanceRepository.persist(Balance.create(generateBalanceIdentifier.generate(),
+                                                                        BigDecimal.valueOf(100),
+                                                                        persistedUser))
 
-        currentBalance.updateUser(currentUser)
-        currentUser.updateBalance(currentBalance)
-
-        userRepository.flush()
+        persistedUser.updateBalance(persistedBalance)
+        userRepository.update(persistedUser)
 
         def request = new RestCreateBalanceRequest(BalanceCode.CODE_1)
 
         when:
-        def createBalanceResult = webTestClient.post().uri("/api/balance")
-                                .bodyValue(request)
-                                .headers(headers -> headers.setBasicAuth(currentUser.getName(), "password"))
-                                .exchange()
-                                .expectStatus().isCreated()
-                                .expectBody(CreateBalanceResult.class)
-                                .returnResult().getResponseBody()
+        webTestClient.post().uri("/api/balance")
+                     .bodyValue(request)
+                     .headers(headers -> headers.setBasicAuth(persistedUser.getName(), "password"))
+                     .exchange()
+                     .expectStatus().isBadRequest()
 
         then: 'Should be created one balance'
         def balances = balanceRepository.findAll()
         balances.size() == 1
 
-        def balance = balances.first() as Balance
-        balance.getDailyTransactionsCount() == 0
-        balance.getId() == createBalanceResult.balanceId()
-        balance.getUser().getId() == currentUser.getId()
-        balance.getAmount() == request.balanceCode().getValue()
+
+        def createdBalance = balances.first()
+        verifyAll(createdBalance) {
+            it.getDailyTransactionsCount() == 0
+            it.getId() != null
+            it.getUser().getId() == persistedUser.getId()
+            it.getAmount() == request.balanceCode().getValue()
+        }
 
         and: 'User should has assigned new balance'
         def users = userRepository.findAll()
         users.size() == 1
 
         def user = users.first() as User
-        user.getBalance().getId() == balance.getId()
+        user.getBalance().getId() == createdBalance.getId()
     }
 
     def cleanup() {

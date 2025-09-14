@@ -11,8 +11,8 @@ public record PostgresUserRepository(JpaUserRepository jpaUserRepository) implem
                                                                                      FindUserDetails {
 
     @Override
-    public User persistNew(User user) {
-        return jpaUserRepository.persist(user);
+    public void persistNew(User user) {
+        jpaUserRepository.persist(user);
     }
 
     @Override

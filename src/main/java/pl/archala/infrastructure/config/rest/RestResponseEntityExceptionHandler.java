@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import pl.archala.application.api.error.ApplicationException;
 import pl.archala.application.api.error.ErrorCode;
 import pl.archala.application.api.error.ErrorResponse;
 
@@ -43,8 +44,15 @@ class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler 
     }
 
     @ExceptionHandler({PropertyReferenceException.class})
-    protected ResponseEntity<ErrorResponse> handleBadRequestExceptions(Exception e) {
+    protected ResponseEntity<ErrorResponse> handlePropertyReferenceException(PropertyReferenceException e) {
         var errorResponse = ErrorResponse.of(List.of(e.getMessage()), ErrorCode.BAD_REQUEST);
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(ApplicationException.class)
+    protected ResponseEntity<ErrorResponse> handleApplicationException(ApplicationException e) {
+        var errorResponse = ErrorResponse.of(List.of(e.getMessage()), ErrorCode.BAD_REQUEST);
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
 }

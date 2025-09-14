@@ -7,7 +7,7 @@ import pl.archala.infrastructure.adapter.in.encode.UserPasswordEncoder
 
 class UserFixture {
 
-    static User custom(Map map = [:], UserPasswordEncoder userPasswordEncoder) {
+    static User custom(UserPasswordEncoder userPasswordEncoder, Map map = [:]) {
         def id = (map.id ?: null) as Long
         def name = (map.name ?: "name") as String
         def password = (map.password ?: userPasswordEncoder.encode("password")) as char[]
@@ -15,7 +15,6 @@ class UserFixture {
         def email = (map.email ?: "user@home.com") as String
         def notificationChannel = (map.notificationChannel ?: NotificationChannel.EMAIL) as NotificationChannel
         def balance = (map.balance ?: null) as Balance
-        def externalUuid = (map.externalUuid ?: UUID.randomUUID()) as UUID
         def version = (map.version ?: 0L) as Long
         return new User(id,
                         name,
@@ -24,7 +23,6 @@ class UserFixture {
                         email,
                         notificationChannel,
                         balance,
-                        externalUuid,
                         version)
     }
 

@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import pl.archala.application.api.user.RestCreateUserRequest;
 import pl.archala.application.command.user.create.CreateUserApplicationService;
 import pl.archala.application.command.user.create.CreateUserCommand;
-import pl.archala.application.command.user.create.CreateUserResult;
 import pl.archala.application.query.find_user_balance_details.FindUserBalanceDetails;
 import pl.archala.application.query.find_user_balance_details.FindUserBalanceDetailsQuery;
 import pl.archala.application.query.find_user_balance_details.FindUserBalanceDetailsView;
@@ -29,16 +28,18 @@ public class UserController {
     private final FindUserDetails findUserDetails;
 
     @ResponseStatus(value = HttpStatus.CREATED)
-    @PostMapping("/register")
-    public CreateUserResult create(@RequestBody @Valid RestCreateUserRequest request) {
+    @PostMapping("/create")
+    public void create(@RequestBody @Valid RestCreateUserRequest request) {
+        log.info("Create user request incoming: {}", request);
+
         var command = new CreateUserCommand(request.name(),
                                             request.password(),
                                             request.phone(),
                                             request.email(),
                                             request.notificationChannel());
-        var createUserResult = createUserApplicationService.createUser(command);
-        log.info("User with name: {} has been created", command.name());
-        return createUserResult;
+        createUserApplicationService.createUser(command);
+
+        log.info("User with name: {} has been created", request.name());
     }
 
     @GetMapping("/balance-details")

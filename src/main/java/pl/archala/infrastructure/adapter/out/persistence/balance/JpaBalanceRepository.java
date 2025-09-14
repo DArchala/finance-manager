@@ -15,7 +15,7 @@ public interface JpaBalanceRepository extends BaseJpaRepository<Balance, String>
     @Query("update Balance b set b.dailyTransactionsCount = 0")
     void resetAllBalancesLimit();
 
-    Optional<Balance> findByUserName(String userName);
+    Optional<Balance> findByUser_Name(String userName);
 
     List<Balance> findAll();
 

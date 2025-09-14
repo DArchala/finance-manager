@@ -19,7 +19,7 @@ public class Balance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 20)
     private String generatedId;
 
     @Column(nullable = false)
@@ -53,10 +53,6 @@ public class Balance {
 
     public static Balance create(BalanceGeneratedIdentifier identifier, BigDecimal value, User user) {
         return new Balance(null, identifier.id(), value, user, 0, 0L);
-    }
-
-    public void updateUser(User user) {
-        this.user = user;
     }
 
     @Override

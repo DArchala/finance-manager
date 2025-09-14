@@ -17,7 +17,7 @@ public record CreateBalanceApplicationService(UserRepositoryPort userRepositoryP
         var user = userRepositoryPort.findByName(command.balanceOwnerUserName());
 
         if (user.hasBalance()) {
-            throw ApplicationException.from("User with name: %s already contains balance.".formatted(command.balanceOwnerUserName()), ErrorCode.UNPROCESSABLE_ENTITY);
+            throw ApplicationException.from("User with name: %s already has balance.".formatted(command.balanceOwnerUserName()), ErrorCode.UNPROCESSABLE_ENTITY);
         }
 
         var balance = transactionExecutor.executeInTransactionAndReturn(() -> {
@@ -29,7 +29,7 @@ public record CreateBalanceApplicationService(UserRepositoryPort userRepositoryP
             return persistedBalance;
         });
 
-        return new CreateBalanceResult(balance.getId());
+        return new CreateBalanceResult(balance.getGeneratedId());
     }
 
 }

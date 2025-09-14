@@ -10,7 +10,6 @@ import pl.archala.domain.notification.NotificationChannel;
 
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.UUID;
 
 @ToString
 @Getter
@@ -40,13 +39,9 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private NotificationChannel notificationChannel;
 
-    @ToString.Exclude
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "balance_id")
+    @JoinColumn(name = "balance_id", referencedColumnName = "id")
     private Balance balance;
-
-    @Column(nullable = false, unique = true)
-    private UUID externalUuid;
 
     @Column(nullable = false)
     @Version
@@ -60,7 +55,6 @@ public class User {
                         email,
                         notificationChannel,
                         null,
-                        UUID.randomUUID(),
                         0L);
     }
 
@@ -79,11 +73,11 @@ public class User {
         }
         return Objects.equals(id, user.id) && Objects.equals(name, user.name) && Objects.deepEquals(password, user.password) &&
                Objects.equals(phone, user.phone) && Objects.equals(email, user.email) && notificationChannel == user.notificationChannel &&
-               Objects.equals(balance, user.balance) && Objects.equals(externalUuid, user.externalUuid);
+               Objects.equals(balance, user.balance);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, Arrays.hashCode(password), phone, email, notificationChannel, balance, externalUuid);
+        return Objects.hash(id, name, Arrays.hashCode(password), phone, email, notificationChannel, balance);
     }
 }

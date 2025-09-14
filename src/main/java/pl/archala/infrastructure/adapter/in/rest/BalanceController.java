@@ -27,27 +27,27 @@ public class BalanceController {
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping
     public CreateBalanceResult create(@RequestBody @Valid RestCreateBalanceRequest request, Principal principal) {
-        var command = new CreateBalanceCommand(request.balanceCode(), principal.getName());
-        var createUserBalanceResult = createBalanceApplicationService.createBalance(command);
-        log.info("Balance with id {} has been created with amount {} for user {}",
-                 createUserBalanceResult.balanceId(),
-                 request.balanceCode()
-                        .getValue(),
-                 principal.getName());
+        log.info("Create balance request incoming: {}, invoked by user: {}", request, principal.getName());
 
-        return createUserBalanceResult;
+        var command = new CreateBalanceCommand(request.balanceCode(), principal.getName());
+        var createBalanceResult = createBalanceApplicationService.createBalance(command);
+
+        log.info("Balance with id: {} has been created for user: {}", createBalanceResult.balanceId(), principal.getName());
+        return createBalanceResult;
     }
 
     @ResponseStatus(value = HttpStatus.ACCEPTED)
     @PostMapping("/send-money")
-    public void sendMoney(@Valid @RequestBody RestSendMoneyRequest request, Principal principal) {
+    public void sendMoney(@RequestBody @Valid RestSendMoneyRequest request, Principal principal) {
+        log.info("Send money request incoming: {}, invoked by user: {}", request, principal.getName());
+
         var command = new SendMoneyCommand(principal.getName(),
                                            request.targetBalanceId(),
                                            request.amount());
         sendMoneyApplicationService.sendMoney(command);
-        log.info("Money has been sent from balance belong to user: {} to balance with id: {} with amount: {}",
+        log.info("Money with amount: {} has been sent from balance belong to user: {} to balance with id: {} ",
+                 request.amount(),
                  principal.getName(),
-                 request.targetBalanceId(),
-                 request.amount());
+                 request.targetBalanceId());
     }
 }

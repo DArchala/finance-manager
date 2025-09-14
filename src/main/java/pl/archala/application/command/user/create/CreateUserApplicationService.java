@@ -9,15 +9,14 @@ public record CreateUserApplicationService(EncodePassword encodePassword,
                                            TransactionExecutor transactionExecutor,
                                            UserRepositoryPort userRepositoryPort) {
 
-    public CreateUserResult createUser(CreateUserCommand command) {
+    public void createUser(CreateUserCommand command) {
         var user = User.create(command.name(),
                                encodePassword.encode(command.password()),
                                command.phone(),
                                command.email(),
                                command.notificationChannel());
 
-        return transactionExecutor.executeInTransactionAndReturn(() -> new CreateUserResult(userRepositoryPort.persistNew(user)
-                                                                                                              .getExternalUuid()));
+        transactionExecutor.executeInTransaction(() -> userRepositoryPort.persistNew(user));
     }
 
 }
