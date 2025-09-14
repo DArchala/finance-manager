@@ -1,5 +1,6 @@
 package pl.archala.application.command.balance.create;
 
+import lombok.RequiredArgsConstructor;
 import pl.archala.application.api.error.ApplicationException;
 import pl.archala.application.api.error.ErrorCode;
 import pl.archala.domain.balance.Balance;
@@ -8,10 +9,13 @@ import pl.archala.domain.balance.BalanceRepositoryPort;
 import pl.archala.domain.user.UserRepositoryPort;
 import pl.archala.shared.TransactionExecutor;
 
-public record CreateBalanceApplicationService(UserRepositoryPort userRepositoryPort,
-                                              BalanceRepositoryPort balanceRepositoryPort,
-                                              TransactionExecutor transactionExecutor,
-                                              GenerateBalanceIdentifier generateBalanceIdentifier) {
+@RequiredArgsConstructor
+public class CreateBalanceApplicationService {
+
+    private final UserRepositoryPort userRepositoryPort;
+    private final BalanceRepositoryPort balanceRepositoryPort;
+    private final TransactionExecutor transactionExecutor;
+    private final GenerateBalanceIdentifier generateBalanceIdentifier;
 
     public CreateBalanceResult createBalance(CreateBalanceCommand command) {
         var user = userRepositoryPort.findByName(command.balanceOwnerUserName());

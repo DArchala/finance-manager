@@ -8,15 +8,16 @@ import pl.archala.domain.balance.BalanceCode
 import pl.archala.domain.user.User
 import pl.archala.domain.user.UserFixture
 
-class BalanceControllerTest extends BaseE2ESpecification {
+class BalanceControllerE2ETest extends BaseE2ESpecification {
 
     def 'Should create balance for user'() {
-        given:
+        given: 'Prepare user'
         def currentUser = userRepository.persist(UserFixture.custom(userPasswordEncoder))
 
+        and: 'Prepare create balance request'
         def request = new RestCreateBalanceRequest(BalanceCode.CODE_1)
 
-        when:
+        when: 'Create balance'
         def createBalanceResult = webTestClient.post().uri("/api/balance")
                                                .bodyValue(request)
                                                .headers(headers -> headers.setBasicAuth(currentUser.getName(), "password"))
@@ -44,7 +45,7 @@ class BalanceControllerTest extends BaseE2ESpecification {
     }
 
     def 'Should throw exception if user already has balance'() {
-        given:
+        given: 'Prepare user with balance'
         def persistedUser = userRepository.persist(UserFixture.custom(userPasswordEncoder))
         def persistedBalance = balanceRepository.persist(Balance.create(generateBalanceIdentifier.generate(),
                                                                         BigDecimal.valueOf(100),
@@ -53,19 +54,19 @@ class BalanceControllerTest extends BaseE2ESpecification {
         persistedUser.updateBalance(persistedBalance)
         userRepository.update(persistedUser)
 
+        and: 'Prepare create balance requst'
         def request = new RestCreateBalanceRequest(BalanceCode.CODE_1)
 
-        when:
+        when: 'Try to create second balance'
         webTestClient.post().uri("/api/balance")
                      .bodyValue(request)
                      .headers(headers -> headers.setBasicAuth(persistedUser.getName(), "password"))
                      .exchange()
                      .expectStatus().isBadRequest()
 
-        then: 'Should be created one balance'
+        then: 'Only one balance should be present in postgres'
         def balances = balanceRepository.findAll()
         balances.size() == 1
-
 
         def createdBalance = balances.first()
         verifyAll(createdBalance) {

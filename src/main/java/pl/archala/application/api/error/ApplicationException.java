@@ -22,4 +22,12 @@ public class ApplicationException extends RuntimeException {
         return new ApplicationException(message, ErrorCode.NOT_FOUND, Instant.now());
     }
 
+    public static ApplicationException badRequest(String message) {
+        return new ApplicationException(message, ErrorCode.BAD_REQUEST, Instant.now());
+    }
+
+    public static ApplicationException internalError() {
+        return new ApplicationException("Internal error", ErrorCode.INTERNAL_SERVER_ERROR, Instant.now());
+    }
+
 }

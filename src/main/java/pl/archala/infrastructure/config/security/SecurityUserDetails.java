@@ -1,5 +1,6 @@
 package pl.archala.infrastructure.config.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,7 +9,10 @@ import pl.archala.domain.user.User;
 import java.util.Collection;
 import java.util.List;
 
-public record SecurityUserDetails(User user) implements UserDetails {
+@RequiredArgsConstructor
+public class SecurityUserDetails implements UserDetails {
+
+    private final User user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

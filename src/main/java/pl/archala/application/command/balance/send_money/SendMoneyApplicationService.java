@@ -1,5 +1,6 @@
 package pl.archala.application.command.balance.send_money;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import pl.archala.application.api.error.ApplicationException;
 import pl.archala.application.api.error.ErrorCode;
@@ -15,10 +16,13 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 @Slf4j
-public record SendMoneyApplicationService(UserRepositoryPort userRepositoryPort,
-                                          BalanceRepositoryPort balanceRepositoryPort,
-                                          NotifyUser notifyUser,
-                                          TransactionExecutor transactionExecutor) {
+@RequiredArgsConstructor
+public class SendMoneyApplicationService {
+
+    private final UserRepositoryPort userRepositoryPort;
+    private final BalanceRepositoryPort balanceRepositoryPort;
+    private final NotifyUser notifyUser;
+    private final TransactionExecutor transactionExecutor;
 
     public void sendMoney(SendMoneyCommand command) {
         var userContractor = userRepositoryPort.findByName(command.username());

@@ -1,5 +1,6 @@
 package pl.archala.infrastructure.adapter.in.generate;
 
+import lombok.RequiredArgsConstructor;
 import pl.archala.domain.balance.BalanceGeneratedIdentifier;
 import pl.archala.domain.balance.GenerateBalanceIdentifier;
 
@@ -7,7 +8,10 @@ import java.security.SecureRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public record BalanceIdentifierGenerator(SecureRandom secureRandom) implements GenerateBalanceIdentifier {
+@RequiredArgsConstructor
+public class BalanceIdentifierGenerator implements GenerateBalanceIdentifier {
+
+    private final SecureRandom secureRandom;
 
     private static final int DEFAULT_LENGTH = 20;
 
